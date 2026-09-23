@@ -12,17 +12,20 @@ const images = [
 
 const MainCarousel = () => {
   const [currentImage, setCurrentImage] = useState(0);
-  const [isChanging, setIsChanging] = useState(false);
+  const [isGlitching, setIsGlitching] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsChanging(true);
+      setIsGlitching(true);
 
       setTimeout(() => {
         setCurrentImage((current) => (current + 1) % images.length);
-        setIsChanging(false);
-      }, 250);
-    }, 3000);
+      }, 200);
+
+      setTimeout(() => {
+        setIsGlitching(false);
+      }, 400);
+    }, 2300);
 
     return () => clearInterval(interval);
   }, []);
@@ -31,10 +34,10 @@ const MainCarousel = () => {
     <div className="main-carousel">
       <img
         className={`main-carousel__image ${
-          isChanging ? 'main-carousel__image--blur' : ''
+          isGlitching ? 'main-carousel__image--glitch' : ''
         }`}
         src={images[currentImage]}
-        alt={`Xolo ${currentImage + 1}`}
+        alt={`Imagen ${currentImage + 1}`}
       />
     </div>
   );
