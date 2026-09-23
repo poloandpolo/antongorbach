@@ -15,7 +15,7 @@
     display: block;
 
     filter: blur(0);
-    transition: filter 0.30s ease-in-out;
+    transition: filter 0.40s ease-in-out;
 
     &--blur {
       filter: blur(100px);
