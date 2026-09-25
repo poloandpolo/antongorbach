@@ -1,4 +1,5 @@
 .main-carousel {
+  position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
@@ -8,80 +9,534 @@
   justify-content: center;
   align-items: center;
 
-  &__image {
+  /* =========================
+     CONTENEDOR DE IMÁGENES
+  ========================= */
+
+  &__image-container {
+    position: relative;
     width: 90%;
     height: 90%;
+    overflow: hidden;
+  }
+
+  /* =========================
+     IMÁGENES DEL CARRUSEL
+  ========================= */
+
+  &__image {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
     object-fit: cover;
     display: block;
+
+    will-change: transform, filter, opacity;
   }
 
-  &__image--glitch {
-    animation: glitch-blur 400ms steps(2, end);
+  /* =========================
+     IMAGEN QUE SALE
+     ZOOM OUT + BLUR
+  ========================= */
+
+  &__image--out {
+    z-index: 1;
+
+    animation:
+      image-out
+      800ms
+      cubic-bezier(0.22, 1, 0.36, 1)
+      forwards;
   }
 
-  @keyframes glitch-blur {
+  /* =========================
+     IMAGEN QUE ENTRA
+     ZOOM IN + BLUR
+  ========================= */
+
+  &__image--in {
+    z-index: 2;
+
+    animation:
+      image-in
+      800ms
+      cubic-bezier(0.22, 1, 0.36, 1)
+      forwards;
+  }
+
+  /* =========================
+     CONTENEDOR DE PORTADA
+  ========================= */
+
+  &__slide {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    color: white;
+    pointer-events: none;
+  }
+
+  /* =========================
+     PORTADA
+  ========================= */
+
+  &__intro-content {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    animation:
+      intro-content-reveal
+      1.8s
+      ease-out
+      0.3s
+      both;
+  }
+
+  /* =========================
+     REVELADO NEGRO DE PORTADA
+  ========================= */
+
+  &__intro-reveal {
+    position: absolute;
+    inset: 0;
+
+    background: #000;
+
+    z-index: 10;
+    pointer-events: none;
+
+    animation:
+      intro-reveal
+      3.5s
+      ease-out
+      forwards;
+  }
+
+  /* =========================
+     HEADER DE PORTADA
+  ========================= */
+
+  &__intro-header {
+    position: absolute;
+
+    top: 19%;
+    left: 10%;
+
+    display: flex;
+    flex-direction: column;
+
+    font-size: 1rem;
+    letter-spacing: 0.4em;
+    line-height: 1.4;
+  }
+
+  /* =========================
+     TÍTULO DE PORTADA
+  ========================= */
+
+  &__intro-title {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 90vw;
+      max-width: 380px;
+
+      height: auto;
+
+      aspect-ratio: 380 / 110;
+
+      display: block;
+    }
+  }
+
+  /* =========================
+     FOOTER DE PORTADA
+  ========================= */
+
+  &__intro-footer {
+    position: absolute;
+
+    bottom: 5%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    gap: 2rem;
+
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+
+    white-space: nowrap;
+  }
+
+  /* =========================
+     NOMBRE DEL PROCEDIMIENTO
+  ========================= */
+
+  &__procedure {
+    position: absolute;
+
+    z-index: 5;
+
+    left: 50%;
+    top: 50%;
+
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /*
+      La posición del título queda fija.
+      La animación solamente afecta
+      opacity y blur del img.
+    */
+
+    transform: translate(-50%, -250%);
+
+    pointer-events: none;
+
+    img {
+      display: block;
+
+      width: 80vw;
+      max-width: 500px;
+
+      height: auto;
+
+      will-change: filter, opacity;
+    }
+  }
+
+  /* =========================
+     TÍTULO QUE SALE
+  ========================= */
+
+  &__procedure--out img {
+    animation:
+      procedure-out
+      800ms
+      ease-out
+      forwards;
+  }
+
+  /* =========================
+     TÍTULO QUE ENTRA
+     MISMO EFECTO QUE PORTADA
+  ========================= */
+
+  &__procedure--in img {
+    animation:
+      procedure-in
+      800ms
+      ease-out
+      forwards;
+  }
+
+  /* =========================
+     FRANJAS NEGRAS
+  ========================= */
+
+  &__frame {
+    position: absolute;
+
+    left: 0;
+
+    width: 100%;
+
+    /*
+      Longitud de las franjas
+    */
+
+    height: 32%;
+
+    z-index: 4;
+
+    pointer-events: none;
+
+    will-change: opacity;
+  }
+
+  /* =========================
+     FRANJA SUPERIOR
+  ========================= */
+
+  &__frame--top {
+    top: 0;
+
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.36) 25%,
+      rgba(0, 0, 0, 0.18) 55%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  /* =========================
+     FRANJA INFERIOR
+  ========================= */
+
+  &__frame--bottom {
+    bottom: 0;
+
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.36) 25%,
+      rgba(0, 0, 0, 0.15) 55%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  /* =========================
+     ENTRADA DE FRANJAS
+  ========================= */
+
+  &__frame--entering {
+    animation:
+      frame-enter
+      800ms
+      cubic-bezier(0.22, 1, 0.36, 1)
+      forwards;
+  }
+
+  /* =========================
+     TRANSICIÓN FOTOGRÁFICA
+  ========================= */
+
+  @keyframes image-out {
     0% {
-      transform: translateX(0);
+      transform: scale(1);
       filter: blur(0);
-    }
-
-    10% {
-      transform: translateX(-12px);
-      filter: blur(2px) contrast(1.3);
-    }
-
-    20% {
-      transform: translateX(14px);
-      filter: blur(6px) contrast(1.5);
-    }
-
-    30% {
-      transform: translateX(-10px);
-      filter: blur(12px) contrast(1.7);
-    }
-
-    40% {
-      transform: translateX(16px);
-      filter: blur(18px) contrast(1.8);
-    }
-
-    50% {
-      transform: translateX(-12px);
-      filter: blur(22px) contrast(1.6);
-    }
-
-    60% {
-      transform: translateX(8px);
-      filter: blur(14px) contrast(1.5);
-    }
-
-    70% {
-      transform: translateX(-5px);
-      filter: blur(8px) contrast(1.3);
-    }
-
-    85% {
-      transform: translateX(3px);
-      filter: blur(3px);
+      opacity: 1;
     }
 
     100% {
-      transform: translateX(0);
+      transform: scale(0.96);
+      filter: blur(8px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes image-in {
+    0% {
+      transform: scale(1.04);
+      filter: blur(8px);
+      opacity: 0;
+    }
+
+    100% {
+      transform: scale(1);
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+
+  /* =========================
+     PROCEDIMIENTO QUE SALE
+     BLUR 0 → 20px
+  ========================= */
+
+  @keyframes procedure-out {
+    from {
+      opacity: 1;
+      filter: blur(0);
+    }
+
+    to {
+      opacity: 0;
+      filter: blur(20px);
+    }
+  }
+
+  /* =========================
+     PROCEDIMIENTO QUE ENTRA
+     BLUR 20px → 0
+     IGUAL QUE PORTADA
+  ========================= */
+
+  @keyframes procedure-in {
+    from {
+      opacity: 0;
+      filter: blur(20px);
+    }
+
+    to {
+      opacity: 1;
       filter: blur(0);
     }
   }
 
-  @media (max-width: 768px) {
-    &__image {
-      width: 90%;
-      height: 80%;
+  /* =========================
+     ENTRADA DE FRANJAS
+  ========================= */
+
+  @keyframes frame-enter {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
     }
   }
 
+  /* =========================
+     ANIMACIÓN PORTADA
+  ========================= */
+
+  @keyframes intro-reveal {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @keyframes intro-content-reveal {
+    from {
+      opacity: 0;
+      filter: blur(20px);
+    }
+
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  /* =========================
+     TABLET
+  ========================= */
+
+  @media (max-width: 768px) {
+    &__image-container {
+      width: 90%;
+      height: 80%;
+    }
+
+    &__intro-header {
+      top: 15%;
+      left: 7%;
+
+      font-size: 0.85rem;
+    }
+
+    &__intro-title {
+      img {
+        width: 90vw;
+        max-width: 380px;
+      }
+    }
+
+    &__intro-footer {
+      bottom: 6%;
+
+      gap: 1.5rem;
+
+      font-size: 0.65rem;
+    }
+
+    &__procedure {
+      img {
+        width: 75vw;
+        max-width: 400px;
+      }
+    }
+
+    /* Franjas */
+
+    &__frame {
+      height: 34%;
+    }
+  }
+
+  /* =========================
+     MOBILE
+  ========================= */
+
   @media (max-width: 480px) {
-    &__image {
+    &__image-container {
       width: 100%;
-      height: 90%;
+      height: 100%;
+    }
+
+    &__intro-header {
+      top: 12%;
+      left: 6%;
+
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+    }
+
+    &__intro-title {
+      left: 50%;
+      top: 50%;
+
+      transform: translate(-50%, 69%);
+
+      img {
+        width: 55vw;
+
+        height: auto;
+
+        aspect-ratio: 220 / 160;
+
+        display: block;
+      }
+    }
+
+    &__intro-footer {
+      bottom: 5%;
+
+      gap: 1rem;
+
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+    }
+
+    &__procedure {
+      /*
+        Posición fija del procedimiento
+      */
+
+      transform: translate(-50%, -280%);
+
+      img {
+        width: 75vw;
+        max-width: 320px;
+      }
+    }
+
+    /* Franjas móviles */
+
+    &__frame {
+      height: 70%;
     }
   }
 }
