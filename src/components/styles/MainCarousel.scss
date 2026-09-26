@@ -10,6 +10,33 @@
   align-items: center;
 
   /* =========================
+     VIDEO DE INTRODUCCIÓN
+  ========================= */
+
+  &__intro-video {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    background: #000;
+
+    z-index: 1000;
+
+    overflow: hidden;
+
+    video {
+      width: 100%;
+      height: 100%;
+
+      display: block;
+
+      object-fit: cover;
+    }
+  }
+
+  /* =========================
      CONTENEDOR DE IMÁGENES
   ========================= */
 
@@ -34,12 +61,29 @@
     object-fit: cover;
     display: block;
 
+    /*
+      IMPORTANTE:
+
+      La primera imagen no tiene ninguna
+      animación.
+
+      Aparece directamente en su estado
+      normal:
+
+      scale(1)
+      blur(0)
+      opacity(1)
+    */
+
     will-change: transform, filter, opacity;
   }
 
   /* =========================
      IMAGEN QUE SALE
      ZOOM OUT + BLUR
+
+     Se utiliza únicamente cuando
+     comienza una transición.
   ========================= */
 
   &__image--out {
@@ -55,6 +99,9 @@
   /* =========================
      IMAGEN QUE ENTRA
      ZOOM IN + BLUR
+
+     Se utiliza únicamente cuando
+     comienza una transición.
   ========================= */
 
   &__image--in {
@@ -84,6 +131,9 @@
 
   /* =========================
      PORTADA
+
+     ESTA ANIMACIÓN SE MANTIENE
+     INTACTA
   ========================= */
 
   &__intro-content {
@@ -103,23 +153,12 @@
 
   /* =========================
      REVELADO NEGRO DE PORTADA
+
+     SE MANTIENE INTACTO
   ========================= */
 
-  &__intro-reveal {
-    position: absolute;
-    inset: 0;
+  
 
-    background: #000;
-
-    z-index: 10;
-    pointer-events: none;
-
-    animation:
-      intro-reveal
-      3.5s
-      ease-out
-      forwards;
-  }
 
   /* =========================
      HEADER DE PORTADA
@@ -141,6 +180,9 @@
 
   /* =========================
      TÍTULO DE PORTADA
+
+     IMAGEN DE LAS LETRAS
+     SE MANTIENE INTACTA
   ========================= */
 
   &__intro-title {
@@ -405,18 +447,11 @@
 
   /* =========================
      ANIMACIÓN PORTADA
+
+     MANTENIDA INTACTA
   ========================= */
 
-  @keyframes intro-reveal {
-    from {
-      opacity: 1;
-    }
-
-    to {
-      opacity: 0;
-      visibility: hidden;
-    }
-  }
+  
 
   @keyframes intro-content-reveal {
     from {
@@ -435,6 +470,7 @@
   ========================= */
 
   @media (max-width: 768px) {
+
     &__image-container {
       width: 90%;
       height: 80%;
@@ -481,6 +517,7 @@
   ========================= */
 
   @media (max-width: 480px) {
+
     &__image-container {
       width: 100%;
       height: 100%;
@@ -521,6 +558,7 @@
     }
 
     &__procedure {
+
       /*
         Posición fija del procedimiento
       */
