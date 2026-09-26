@@ -6,7 +6,7 @@ const MainCarousel = () => {
   const slides = [
     {
       image:
-        'https://res.cloudinary.com/djir3xi7x/image/upload/v1790190728/WhatsApp_Image_2026-09-21_at_4.30.44_PM_hgsj3c.jpg',
+        'https://res.cloudinary.com/djir3xi7x/image/upload/v1790431306/WhatsApp_Image_2026-09-21_at_4.30.44_PM_hgsj3c.png',
       titleImage: null,
     },
 
