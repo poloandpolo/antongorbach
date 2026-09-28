@@ -1,0 +1,126 @@
+.app {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #000;
+  overflow: hidden;
+
+  /* =====================================================
+     CARRUSEL
+  ===================================================== */
+
+  &__carousel {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  /* =====================================================
+     BOOKING FORM
+  ===================================================== */
+
+  &__booking {
+    position: absolute;
+    inset: 0;
+
+    z-index: 1;
+
+    width: 100%;
+    min-height: 100vh;
+
+    opacity: 0;
+    transform: scale(1.04);
+    filter: blur(8px);
+
+    pointer-events: none;
+  }
+
+  /* =====================================================
+     TRANSICIÓN
+     
+     EXACTAMENTE IGUAL A LA DEL CARRUSEL
+  ===================================================== */
+
+  &--form-visible {
+
+    /* ===================================================
+       CARRUSEL → SALE
+       
+       scale: 1 → 0.96
+       blur: 0 → 8px
+       opacity: 1 → 0
+    =================================================== */
+
+    .app__carousel {
+      animation:
+        image-out
+        800ms
+        cubic-bezier(0.22, 1, 0.36, 1)
+        forwards;
+    }
+
+    /* ===================================================
+       BOOKING FORM → ENTRA
+       
+       scale: 1.04 → 1
+       blur: 8px → 0
+       opacity: 0 → 1
+    =================================================== */
+
+    .app__booking {
+      animation:
+        image-in
+        800ms
+        cubic-bezier(0.22, 1, 0.36, 1)
+        forwards;
+
+      pointer-events: auto;
+    }
+  }
+}
+
+
+/* =====================================================
+   MISMA ANIMACIÓN DEL CARRUSEL
+   IMAGEN QUE SALE
+===================================================== */
+
+@keyframes image-out {
+
+  0% {
+    transform: scale(1);
+    filter: blur(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.96);
+    filter: blur(8px);
+    opacity: 0;
+  }
+
+}
+
+
+/* =====================================================
+   MISMA ANIMACIÓN DEL CARRUSEL
+   IMAGEN QUE ENTRA
+===================================================== */
+
+@keyframes image-in {
+
+  0% {
+    transform: scale(1.04);
+    filter: blur(8px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    filter: blur(0);
+    opacity: 1;
+  }
+
+}

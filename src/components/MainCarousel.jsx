@@ -2,43 +2,37 @@ import React, { useEffect, useState } from 'react';
 
 import '../components/styles/MainCarousel.scss';
 
-const MainCarousel = () => {
+const MainCarousel = ({ onFinish }) => {
   const slides = [
     {
       image:
         'https://res.cloudinary.com/djir3xi7x/image/upload/v1790431306/WhatsApp_Image_2026-09-21_at_4.30.44_PM_hgsj3c.png',
-      titleImage: null,
+      title: null,
     },
-
     {
       image:
         'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193186/WhatsApp_Image_2026-09-21_at_4.30.48_PM_mwcsgi.jpg',
-      titleImage:
-        'https://res.cloudinary.com/djir3xi7x/image/upload/v1790358853/Eyeball_final_bdkhru.png',
+      title: 'Eyeball Tattoo',
     },
-
     {
       image:
         'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193186/WhatsApp_Image_2026-09-21_at_4.31.20_PM_xhruwu.jpg',
-      titleImage: null,
+      title: 'Scarification',
     },
-
     {
       image:
         'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193186/WhatsApp_Image_2026-09-21_at_4.31.56_PM_r2uhkv.jpg',
-      titleImage: null,
+      title: 'Tounge Split',
     },
-
     {
       image:
         'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193185/WhatsApp_Image_2026-09-21_at_4.30.48_PM_1_o4mju2.jpg',
-      titleImage: null,
+      title: ['Subdemal', 'Implant'],
     },
-
     {
       image:
         'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193186/WhatsApp_Image_2026-09-21_at_4.31.17_PM_v6nc3y.jpg',
-      titleImage: null,
+      title: 'Tattoo',
     },
   ];
 
@@ -48,8 +42,6 @@ const MainCarousel = () => {
 
   const [currentImage, setCurrentImage] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-
-  // Controla el video inicial
   const [isIntroVideoPlaying, setIsIntroVideoPlaying] = useState(true);
 
   // ==========================================
@@ -67,9 +59,19 @@ const MainCarousel = () => {
     const slideDuration = 2300;
     const transitionDuration = 800;
 
-    // Detener el carrusel en la última imagen
+    /*
+      Cuando llegamos al último slide,
+      esperamos su tiempo de visualización
+      y después avisamos a App.
+    */
     if (currentImage === slides.length - 1) {
-      return;
+      const finishTimeout = setTimeout(() => {
+        onFinish?.();
+      }, slideDuration);
+
+      return () => {
+        clearTimeout(finishTimeout);
+      };
     }
 
     const duration =
@@ -99,6 +101,7 @@ const MainCarousel = () => {
     currentImage,
     slides.length,
     isIntroVideoPlaying,
+    onFinish,
   ]);
 
   // ==========================================
@@ -113,15 +116,49 @@ const MainCarousel = () => {
       : currentSlide;
 
   // ==========================================
+  // RENDER DEL TÍTULO
+  // ==========================================
+
+  const renderTitle = (title) => {
+    if (Array.isArray(title)) {
+      return (
+        <>
+          {title.map((line, index) => (
+            <React.Fragment key={index}>
+              {line}
+
+              {index < title.length - 1 && <br />}
+            </React.Fragment>
+          ))}
+        </>
+      );
+    }
+
+    return title;
+  };
+
+  // ==========================================
+  // TEXTO PARA LA COPIA MAGENTA
+  // ==========================================
+
+  const getTitleText = (title) => {
+    if (Array.isArray(title)) {
+      return title.join(' ');
+    }
+
+    return title;
+  };
+
+  // ==========================================
   // RENDER
   // ==========================================
 
   return (
     <div className="main-carousel">
 
-      {/* =====================================================
+      {/* ======================================
           VIDEO DE INTRODUCCIÓN
-      ===================================================== */}
+      ====================================== */}
 
       {isIntroVideoPlaying && (
         <div className="main-carousel__intro-video">
@@ -136,13 +173,14 @@ const MainCarousel = () => {
         </div>
       )}
 
-      {/* =====================================================
+      {/* ======================================
           FOTOGRAFÍA
-      ===================================================== */}
+      ====================================== */}
 
       <div className="main-carousel__image-container">
 
         {/* Imagen que sale */}
+
         {isTransitioning && (
           <img
             className="main-carousel__image main-carousel__image--out"
@@ -152,6 +190,7 @@ const MainCarousel = () => {
         )}
 
         {/* Imagen que entra */}
+
         <img
           className={`main-carousel__image ${
             isTransitioning
@@ -168,9 +207,9 @@ const MainCarousel = () => {
 
       </div>
 
-      {/* =====================================================
+      {/* ======================================
           FRANJAS NEGRAS
-      ===================================================== */}
+      ====================================== */}
 
       {(currentImage > 0 || isTransitioning) && (
         <>
@@ -192,52 +231,49 @@ const MainCarousel = () => {
         </>
       )}
 
-      {/* =====================================================
+      {/* ======================================
           NOMBRE DEL PROCEDIMIENTO
-      ===================================================== */}
+      ====================================== */}
 
       {/* TÍTULO ACTUAL */}
 
-      {!isTransitioning && currentSlide.titleImage && (
+      {!isTransitioning && currentSlide.title && (
         <div className="main-carousel__procedure">
-
-          <img
-            src={currentSlide.titleImage}
-            alt="Nombre del procedimiento"
-          />
-
+          <span
+            data-text={getTitleText(currentSlide.title)}
+          >
+            {renderTitle(currentSlide.title)}
+          </span>
         </div>
       )}
 
       {/* TÍTULO QUE SALE */}
 
-      {isTransitioning && currentSlide.titleImage && (
+      {isTransitioning && currentSlide.title && (
         <div className="main-carousel__procedure main-carousel__procedure--out">
-
-          <img
-            src={currentSlide.titleImage}
-            alt="Nombre del procedimiento"
-          />
-
+          <span
+            data-text={getTitleText(currentSlide.title)}
+          >
+            {renderTitle(currentSlide.title)}
+          </span>
         </div>
       )}
 
       {/* TÍTULO QUE ENTRA */}
 
-      {isTransitioning && nextSlide.titleImage && (
+      {isTransitioning && nextSlide.title && (
         <div className="main-carousel__procedure main-carousel__procedure--in">
-
-          <img
-            src={nextSlide.titleImage}
-            alt="Nombre del procedimiento"
-          />
-
+          <span
+            data-text={getTitleText(nextSlide.title)}
+          >
+            {renderTitle(nextSlide.title)}
+          </span>
         </div>
       )}
 
-      {/* =====================================================
+      {/* ======================================
           PORTADA / INTRO
-      ===================================================== */}
+      ====================================== */}
 
       {currentImage === 0 && !isIntroVideoPlaying && (
         <div className="main-carousel__slide main-carousel__slide--intro">
@@ -247,39 +283,35 @@ const MainCarousel = () => {
             {/* Encabezado */}
 
             <div className="main-carousel__intro-header">
+              <span>
+                BODY MODIFICATION
+              </span>
 
-              <span>BODY MODIFICATION</span>
-
-              <span>TATTOO ARTIST</span>
-
+              <span>
+                TATTOO ARTIST
+              </span>
             </div>
 
             {/* Logo / nombre */}
 
             <div className="main-carousel__intro-title">
-
               <img
                 src="https://res.cloudinary.com/djir3xi7x/image/upload/v1790355710/Anton_Gorbach_final_l4q2kg.png"
                 alt="Anton Gorbach"
               />
-
             </div>
 
             {/* Ubicaciones */}
 
             <footer className="main-carousel__intro-footer">
-
               <span>PUEBLA</span>
-
               <span>CDMX</span>
-
               <span>GUADALAJARA</span>
-
             </footer>
 
           </div>
 
-          {/* Revelado inicial desde negro */}
+          {/* Revelado inicial */}
 
           <div className="main-carousel__intro-reveal" />
 

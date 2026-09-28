@@ -4,7 +4,6 @@
   height: 100vh;
   overflow: hidden;
   background: #000;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,22 +15,16 @@
   &__intro-video {
     position: fixed;
     inset: 0;
-
     width: 100%;
     height: 100vh;
-
     background: #000;
-
     z-index: 1000;
-
     overflow: hidden;
 
     video {
       width: 100%;
       height: 100%;
-
       display: block;
-
       object-fit: cover;
     }
   }
@@ -54,36 +47,16 @@
   &__image {
     position: absolute;
     inset: 0;
-
     width: 100%;
     height: 100%;
-
     object-fit: cover;
     display: block;
-
-    /*
-      IMPORTANTE:
-
-      La primera imagen no tiene ninguna
-      animación.
-
-      Aparece directamente en su estado
-      normal:
-
-      scale(1)
-      blur(0)
-      opacity(1)
-    */
-
     will-change: transform, filter, opacity;
   }
 
   /* =========================
      IMAGEN QUE SALE
      ZOOM OUT + BLUR
-
-     Se utiliza únicamente cuando
-     comienza una transición.
   ========================= */
 
   &__image--out {
@@ -99,9 +72,6 @@
   /* =========================
      IMAGEN QUE ENTRA
      ZOOM IN + BLUR
-
-     Se utiliza únicamente cuando
-     comienza una transición.
   ========================= */
 
   &__image--in {
@@ -121,25 +91,19 @@
   &__slide {
     position: absolute;
     inset: 0;
-
     width: 100%;
     height: 100%;
-
     color: white;
     pointer-events: none;
   }
 
   /* =========================
      PORTADA
-
-     ESTA ANIMACIÓN SE MANTIENE
-     INTACTA
   ========================= */
 
   &__intro-content {
     position: absolute;
     inset: 0;
-
     width: 100%;
     height: 100%;
 
@@ -152,21 +116,11 @@
   }
 
   /* =========================
-     REVELADO NEGRO DE PORTADA
-
-     SE MANTIENE INTACTO
-  ========================= */
-
-  
-
-
-  /* =========================
      HEADER DE PORTADA
   ========================= */
 
   &__intro-header {
     position: absolute;
-
     top: 19%;
     left: 10%;
 
@@ -180,14 +134,10 @@
 
   /* =========================
      TÍTULO DE PORTADA
-
-     IMAGEN DE LAS LETRAS
-     SE MANTIENE INTACTA
   ========================= */
 
   &__intro-title {
     position: absolute;
-
     left: 50%;
     top: 50%;
 
@@ -200,11 +150,8 @@
     img {
       width: 90vw;
       max-width: 380px;
-
       height: auto;
-
       aspect-ratio: 380 / 110;
-
       display: block;
     }
   }
@@ -215,24 +162,31 @@
 
   &__intro-footer {
     position: absolute;
-
     bottom: 5%;
     left: 50%;
 
     transform: translateX(-50%);
 
     display: flex;
-
     gap: 2rem;
 
     font-size: 0.7rem;
     letter-spacing: 0.2em;
-
     white-space: nowrap;
   }
 
   /* =========================
      NOMBRE DEL PROCEDIMIENTO
+     
+     TODOS LOS TÍTULOS:
+     - X centrado
+     - Y centrado respecto
+       al mismo punto
+     
+     IMPORTANTE:
+     NO usamos translateY(-200%)
+     porque ese porcentaje depende
+     de la altura de cada título.
   ========================= */
 
   &__procedure {
@@ -250,24 +204,67 @@
     align-items: center;
 
     /*
-      La posición del título queda fija.
-      La animación solamente afecta
-      opacity y blur del img.
+      El centro del bloque siempre
+      queda exactamente en el mismo
+      punto independientemente de
+      que el título tenga una o dos
+      líneas.
     */
-
-    transform: translate(-50%, -250%);
+    transform: translate(-50%, -50%);
 
     pointer-events: none;
 
-    img {
+    span {
+      position: relative;
+
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 1;
+
+      color: #fff;
+
+      white-space: normal;
+      text-align: center;
+
+      letter-spacing: 0.02em;
+
+      width: max-content;
+      max-width: 100%;
+
       display: block;
 
-      width: 80vw;
-      max-width: 500px;
-
-      height: auto;
-
       will-change: filter, opacity;
+
+      /* =========================
+         TEXTO DUPLICADO MAGENTA
+      ========================= */
+
+      &::after {
+        content: attr(data-text);
+
+        position: absolute;
+
+        left: 0;
+        top: 0;
+
+        width: 100%;
+        height: 100%;
+
+        color: #7d00ab;
+
+        /*
+          Solo desplazamiento vertical
+          del duplicado magenta.
+        */
+        transform: translateY(7px);
+
+        z-index: -1;
+
+        pointer-events: none;
+        user-select: none;
+
+        text-align: center;
+      }
     }
   }
 
@@ -275,25 +272,28 @@
      TÍTULO QUE SALE
   ========================= */
 
-  &__procedure--out img {
-    animation:
-      procedure-out
-      800ms
-      ease-out
-      forwards;
+  &__procedure--out {
+    span {
+      animation:
+        procedure-out
+        800ms
+        ease-out
+        forwards;
+    }
   }
 
   /* =========================
      TÍTULO QUE ENTRA
-     MISMO EFECTO QUE PORTADA
   ========================= */
 
-  &__procedure--in img {
-    animation:
-      procedure-in
-      800ms
-      ease-out
-      forwards;
+  &__procedure--in {
+    span {
+      animation:
+        procedure-in
+        800ms
+        ease-out
+        forwards;
+    }
   }
 
   /* =========================
@@ -306,11 +306,6 @@
     left: 0;
 
     width: 100%;
-
-    /*
-      Longitud de las franjas
-    */
-
     height: 32%;
 
     z-index: 4;
@@ -416,7 +411,6 @@
   /* =========================
      PROCEDIMIENTO QUE ENTRA
      BLUR 20px → 0
-     IGUAL QUE PORTADA
   ========================= */
 
   @keyframes procedure-in {
@@ -447,11 +441,7 @@
 
   /* =========================
      ANIMACIÓN PORTADA
-
-     MANTENIDA INTACTA
   ========================= */
-
-  
 
   @keyframes intro-content-reveal {
     from {
@@ -470,7 +460,6 @@
   ========================= */
 
   @media (max-width: 768px) {
-
     &__image-container {
       width: 90%;
       height: 80%;
@@ -479,7 +468,6 @@
     &__intro-header {
       top: 15%;
       left: 7%;
-
       font-size: 0.85rem;
     }
 
@@ -492,20 +480,29 @@
 
     &__intro-footer {
       bottom: 6%;
-
       gap: 1.5rem;
-
       font-size: 0.65rem;
     }
 
+    /* =========================
+       PROCEDIMIENTO TABLET
+    ========================= */
+
     &__procedure {
-      img {
-        width: 75vw;
-        max-width: 400px;
+      /*
+        MISMO CENTRO VERTICAL
+        PARA TODOS LOS TÍTULOS.
+      */
+      left: 50%;
+      top: 50%;
+
+      transform: translate(-50%, -50%);
+
+      span {
+        font-size: clamp(2.8rem, 8vw, 5rem);
+        text-align: center;
       }
     }
-
-    /* Franjas */
 
     &__frame {
       height: 34%;
@@ -517,7 +514,6 @@
   ========================= */
 
   @media (max-width: 480px) {
-
     &__image-container {
       width: 100%;
       height: 100%;
@@ -539,7 +535,6 @@
 
       img {
         width: 55vw;
-
         height: auto;
 
         aspect-ratio: 220 / 160;
@@ -557,21 +552,39 @@
       letter-spacing: 0.15em;
     }
 
+    /* =========================
+       PROCEDIMIENTO MOBILE
+    ========================= */
+
     &__procedure {
+      left: 50%;
+      top: 27%;
 
       /*
-        Posición fija del procedimiento
+        TODOS los títulos comparten
+        exactamente el mismo centro.
       */
+      transform: translate(-50%, -50%);
 
-      transform: translate(-50%, -280%);
+      span {
+        font-size: 3rem;
 
-      img {
-        width: 75vw;
-        max-width: 320px;
+        white-space: normal;
+        text-align: center;
+
+        width: max-content;
+        max-width: 100%;
+
+        &::after {
+          transform: translateY(7px);
+          text-align: center;
+        }
       }
     }
 
-    /* Franjas móviles */
+    /* =========================
+       FRANJAS MÓVILES
+    ========================= */
 
     &__frame {
       height: 70%;
