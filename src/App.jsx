@@ -4,23 +4,50 @@ import './App.scss';
 
 import MainCarousel from './components/MainCarousel';
 import BookingForm from './components/BookingForm';
+import ProcedureGrid from './components/ProcedureGrid';
 
 function App() {
-  const [showForm, setShowForm] = useState(false);
+  const [showMain, setShowMain] = useState(false);
 
   return (
-    <main className={`app ${showForm ? 'app--form-visible' : ''}`}>
+    <main
+      className={`app ${
+        showMain ? 'app--main-visible' : ''
+      }`}
+    >
 
-      {/* CARRUSEL */}
+      {/* ==========================================
+          CARRUSEL
+      ========================================== */}
+
       <div className="app__carousel">
+
         <MainCarousel
-          onFinish={() => setShowForm(true)}
+          onFinish={() => setShowMain(true)}
         />
+
       </div>
 
-      {/* BOOKING FORM */}
-      <div className="app__booking">
-        <BookingForm />
+
+      {/* ==========================================
+          CONTENIDO PRINCIPAL
+      ========================================== */}
+
+      <div className="app__main">
+
+        {/* FORMULARIO */}
+
+        <section className="app__booking">
+          <BookingForm />
+        </section>
+
+
+        {/* PROCEDIMIENTOS */}
+
+        <section className="app__procedures">
+          <ProcedureGrid />
+        </section>
+
       </div>
 
     </main>

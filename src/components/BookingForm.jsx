@@ -33,7 +33,9 @@ const BookingForm = () => {
       <div className="booking-form__container">
 
         <header className="booking-form__header">
-          <h1>Agenda tu cita</h1>
+          <h1 data-text="Agenda tu cita">
+            Agenda tu cita
+          </h1>
 
           <p>
             Dile a Anton tu visión, agrega una referencia si la tienes

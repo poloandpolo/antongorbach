@@ -56,7 +56,7 @@ const MainCarousel = ({ onFinish }) => {
     }
 
     const introDuration = 5000;
-    const slideDuration = 2300;
+    const slideDuration = 1200;
     const transitionDuration = 800;
 
     /*
