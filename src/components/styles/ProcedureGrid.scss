@@ -1,14 +1,57 @@
 .procedure-grid {
+  position: relative;
   width: 100%;
-  padding: 120px 6vw 140px;
+  padding: 0 6vw 140px;
   background: #000;
   color: #fff;
+  overflow: hidden;
+
+  /* =====================================================
+     FONDO DESENFOCADO
+  ===================================================== */
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    bottom: -20px;
+    left: -20px;
+
+    background-image: url('/Fondo.png');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    filter: blur(6.5px);
+
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* =====================================================
+     CAPA OSCURA
+  ===================================================== */
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.40);
+
+    z-index: 1;
+    pointer-events: none;
+  }
 
   /* =====================================================
      HEADER
   ===================================================== */
 
   &__header {
+    position: relative;
+    z-index: 2;
+
     width: 100%;
     margin-bottom: 70px;
 
@@ -23,9 +66,35 @@
       color: #fff;
 
       text-align: center;
-
       letter-spacing: 0.02em;
     }
+  }
+
+  /* =====================================================
+     DESCRIPCIÓN
+  ===================================================== */
+
+   p {
+    width: 90vw;
+    margin: 28px auto 0;
+
+    text-align: center;
+    line-height: 1.8;
+
+    font-family: 'Almendra', serif;
+    font-size: 21px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+
+    color: rgba(214, 214, 214, 0.85);
+
+    text-wrap: balance;
+  }
+
+  p.procedure-description-visible {
+    animation: description-reveal 4500ms
+      cubic-bezier(0.22, 1, 0.36, 1)
+      both;
   }
 
 
@@ -34,16 +103,37 @@
   ===================================================== */
 
   &__content {
+    position: relative;
+    z-index: 2;
+
     width: 100%;
+
+    margin: 0 auto;
 
     display: grid;
 
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 70px 35px;
+    column-gap: 100px;
+    row-gap: 70px;
   }
 }
 
+/* =========================================================
+   ANIMACIÓN DESCRIPCIÓN
+========================================================= */
+
+@keyframes description-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* =========================================================
    PROCEDURE CARD
@@ -52,12 +142,13 @@
 .procedure-card {
   position: relative;
 
-  width: 100%;
+  width: 85%;
 
-  background: #000;
+  background: transparent;
 
   overflow: hidden;
 
+  margin: auto;
 
   /* =====================================================
      IMAGEN
@@ -68,18 +159,17 @@
 
     width: 100%;
 
-    aspect-ratio: 4 / 5;
+    /* CUADRADO */
+    aspect-ratio: 1 / 1;
 
     overflow: hidden;
 
     background: #111;
 
-
     &::after {
       content: '';
 
       position: absolute;
-
       inset: 0;
 
       background:
@@ -93,7 +183,6 @@
 
       z-index: 1;
     }
-
 
     img {
       width: 100%;
@@ -113,7 +202,6 @@
     }
   }
 
-
   /* =====================================================
      CONTENIDO
   ===================================================== */
@@ -124,13 +212,11 @@
     display: flex;
 
     align-items: center;
-
     justify-content: space-between;
 
     gap: 30px;
 
     padding: 25px 0 0;
-
 
     h3 {
       margin: 0;
@@ -147,7 +233,6 @@
 
       letter-spacing: 0.02em;
     }
-
 
     button {
       flex-shrink: 0;
@@ -174,15 +259,12 @@
     }
   }
 
-
   /* =====================================================
      HOVER
   ===================================================== */
 
   &:hover {
-
     .procedure-card__image {
-
       img {
         transform: scale(1.04);
 
@@ -190,28 +272,35 @@
       }
     }
 
-
     .procedure-card__content {
-
       button {
         background: #fff;
+
         color: #000;
       }
     }
   }
 }
 
-
 /* =========================================================
    TABLET
 ========================================================= */
 
 @media (max-width: 768px) {
-
   .procedure-grid {
+    padding: 0 5vw 110px;
 
-    padding: 90px 5vw 110px;
+    /* =================================================
+       BLUR TABLET
+    ================================================= */
 
+    &::before {
+      filter: blur(5px);
+    }
+
+    /* =================================================
+       HEADER
+    ================================================= */
 
     &__header {
       margin-bottom: 50px;
@@ -221,24 +310,44 @@
       }
     }
 
+    /* =================================================
+       DESCRIPCIÓN
+    ================================================= */
+
+    p {
+      width: 85%;
+
+      max-width: 650px;
+
+      font-size: 19px;
+    }
+
+    /* =================================================
+       GRID
+    ================================================= */
 
     &__content {
+      width: 80%;
+
+      margin: 0 auto;
+
       grid-template-columns: 1fr;
 
       gap: 60px;
     }
   }
 
+  /* =====================================================
+     CARD
+  ===================================================== */
 
   .procedure-card {
-
     &__image {
-      aspect-ratio: 4 / 5;
+      /* CUADRADO */
+      aspect-ratio: 1 / 1;
     }
 
-
     &__content {
-
       h3 {
         font-size: clamp(2.3rem, 9vw, 4rem);
       }
@@ -250,39 +359,84 @@
   }
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 480px) {
-
   .procedure-grid {
+    padding: 0 20px 90px;
 
-    padding: 70px 20px 90px;
+    /* =================================================
+       BLUR MOBILE
+    ================================================= */
 
+    &::before {
+      filter: blur(2.2px);
+    }
+
+    /* =================================================
+       HEADER
+    ================================================= */
 
     &__header {
       margin-bottom: 40px;
 
       h2 {
-        font-size: 3rem;
+        font-size: 2.8rem;
       }
     }
 
+    /* =================================================
+       DESCRIPCIÓN
+    ================================================= */
+
+    p {
+      width: 85vw;
+
+      max-width: 720px;
+
+      margin: 28px auto 0;
+
+      text-align: center;
+
+      line-height: 1.8;
+
+      font-family: 'Almendra', serif;
+
+      font-size: 21px;
+
+      font-weight: 400;
+
+      letter-spacing: 0.08em;
+
+      color: rgba(214, 214, 214, 0.85);
+
+      text-wrap: balance;
+    }
+
+    /* =================================================
+       GRID
+    ================================================= */
 
     &__content {
+      width: 100%;
+
+      margin: 0 auto;
+
       gap: 50px;
     }
   }
 
+  /* =====================================================
+     CARD
+  ===================================================== */
 
   .procedure-card {
-
     &__image {
-      aspect-ratio: 3 / 4;
+      /* CUADRADO */
+      aspect-ratio: 1 / 1;
     }
-
 
     &__content {
       align-items: flex-start;
@@ -291,11 +445,9 @@
 
       padding-top: 20px;
 
-
       h3 {
         font-size: 2rem;
       }
-
 
       button {
         padding: 10px 14px;

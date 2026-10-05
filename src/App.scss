@@ -2,12 +2,9 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-
   background: #000;
   color: #fff;
-
   overflow-x: hidden;
-
 
   /* =====================================================
      CARRUSEL
@@ -15,44 +12,26 @@
 
   &__carousel {
     position: relative;
-
     z-index: 2;
-
     width: 100%;
     min-height: 100vh;
   }
-
 
   /* =====================================================
      CONTENIDO PRINCIPAL
      
-     BookingForm
-     ProcedureGrid
+     Mientras el carrusel está activo:
+     - No ocupa espacio
+     - No existe para el layout
+     - No genera scroll
   ===================================================== */
 
   &__main {
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 1;
-
+    display: none;
     width: 100%;
-    min-height: 100vh;
-
     background: #000;
-
-    /* Oculto mientras está el carrusel */
-    opacity: 0;
-    visibility: hidden;
-
-    /* Estado inicial de la transición */
-    transform: scale(1.04);
-    filter: blur(8px);
-
-    pointer-events: none;
+    color: #fff;
   }
-
 
   /* =====================================================
      BOOKING
@@ -62,7 +41,6 @@
     width: 100%;
   }
 
-
   /* =====================================================
      PROCEDIMIENTOS
   ===================================================== */
@@ -70,7 +48,6 @@
   &__procedures {
     width: 100%;
   }
-
 
   /* =====================================================
      CARRUSEL → MAIN
@@ -80,10 +57,6 @@
 
     /* ===================================================
        CARRUSEL SALE
-       
-       scale: 1 → 0.96
-       blur: 0 → 8px
-       opacity: 1 → 0
     =================================================== */
 
     .app__carousel {
@@ -104,33 +77,21 @@
       z-index: 2;
     }
 
-
     /* ===================================================
-       CONTENIDO PRINCIPAL ENTRA
+       CONTENIDO PRINCIPAL
        
-       scale: 1.04 → 1
-       blur: 8px → 0
-       opacity: 0 → 1
+       Ahora sí aparece en el layout.
     =================================================== */
 
     .app__main {
-      position: relative;
+      display: block;
 
+      position: relative;
       z-index: 3;
 
       width: 100%;
       min-height: 100vh;
 
-      /*
-       * Se hace visible únicamente cuando
-       * termina el carrusel.
-       */
-      visibility: visible;
-
-      /*
-       * Mantiene exactamente la misma
-       * transición del carrusel.
-       */
       animation:
         image-in
         800ms
@@ -142,14 +103,12 @@
   }
 }
 
-
 /* =====================================================
    ANIMACIÓN DE SALIDA
    CARRUSEL
 ===================================================== */
 
 @keyframes image-out {
-
   0% {
     transform: scale(1);
     filter: blur(0);
@@ -163,14 +122,12 @@
   }
 }
 
-
 /* =====================================================
    ANIMACIÓN DE ENTRADA
    MAIN
 ===================================================== */
 
 @keyframes image-in {
-
   0% {
     transform: scale(1.04);
     filter: blur(8px);
@@ -184,15 +141,12 @@
   }
 }
 
-
 /* =====================================================
    RESPONSIVE
 ===================================================== */
 
 @media (max-width: 768px) {
-
   .app__main {
     min-height: 100vh;
   }
-
 }
