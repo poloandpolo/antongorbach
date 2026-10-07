@@ -1,105 +1,117 @@
 .main-carousel {
-
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
   background: #000;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
 
   /* =========================
      VIDEO DE INTRODUCCIÓN
   ========================= */
 
   &__intro-video {
-
     position: fixed;
     inset: 0;
-
     width: 100%;
     height: 100vh;
-
     background: #000;
-
     z-index: 1000;
-
     overflow: hidden;
 
     video {
-
       position: absolute;
       inset: 0;
-
       width: 100%;
       height: 100%;
-
       display: block;
-
       object-fit: cover;
-
-      z-index: 1;
+      z-index: 2;
     }
   }
 
+  /* =========================
+     PRIMER SLIDE PRE-CARGADO
+     
+     La imagen permanece invisible
+     mientras corre el video.
+     
+     Durante los últimos 200ms
+     aparece sobre el video.
+  ========================= */
+
+  &__preload-slide {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+    object-fit: cover;
+
+    opacity: 0;
+
+    /*
+     * La imagen queda por encima
+     * del video.
+     */
+    z-index: 3;
+
+    pointer-events: none;
+    user-select: none;
+
+    /*
+     * Crossfade durante los últimos
+     * 200ms del video.
+     */
+    transition: opacity 200ms linear;
+
+    &--visible {
+      opacity: 1;
+    }
+  }
 
   /* =========================
      FRAME DE INTRODUCCIÓN
   ========================= */
 
   &__intro-frame {
-
     position: absolute;
     inset: 0;
-
     width: 100%;
     height: 100%;
-
     object-fit: cover;
-
     pointer-events: none;
-
     z-index: 2;
   }
-
 
   /* =========================
      CONTENEDOR DE IMÁGENES
   ========================= */
 
   &__image-container {
-
     position: relative;
-
     width: 100%;
     height: 100%;
-
     overflow: hidden;
   }
-
 
   /* =========================
      IMÁGENES DEL CARRUSEL
   ========================= */
 
   &__image {
-
     position: absolute;
     inset: 0;
-
     width: 100%;
     height: 100%;
-
     object-fit: cover;
-
     display: block;
-
     will-change: transform, filter, opacity;
   }
-
 
   /* =========================
      IMAGEN QUE SALE
@@ -107,7 +119,6 @@
   ========================= */
 
   &__image--out {
-
     z-index: 1;
 
     animation:
@@ -117,14 +128,12 @@
       forwards;
   }
 
-
   /* =========================
      IMAGEN QUE ENTRA
      ZOOM IN + BLUR
   ========================= */
 
   &__image--in {
-
     z-index: 2;
 
     animation:
@@ -134,34 +143,26 @@
       forwards;
   }
 
-
   /* =========================
      CONTENEDOR DE PORTADA
   ========================= */
 
   &__slide {
-
     position: absolute;
     inset: 0;
-
     width: 100%;
     height: 100%;
-
     color: white;
-
     pointer-events: none;
   }
-
 
   /* =========================
      CONTENIDO DE PORTADA
   ========================= */
 
   &__intro-content {
-
     position: absolute;
     inset: 0;
-
     width: 100%;
     height: 100%;
 
@@ -173,15 +174,12 @@
       both;
   }
 
-
   /* =========================
      HEADER DE PORTADA
   ========================= */
 
   &__intro-header {
-
     position: absolute;
-
     top: 12%;
     left: 6%;
 
@@ -189,12 +187,9 @@
     flex-direction: column;
 
     font-size: 2.5rem;
-
     letter-spacing: 0.3em;
-
     line-height: 1.4;
   }
-
 
   /* =========================
      CONTENEDOR DEL NOMBRE
@@ -202,32 +197,26 @@
   ========================= */
 
   &__intro-title {
-
     position: absolute;
-
     left: 50%;
     top: 80%;
 
     transform: translate(-50%, -50%);
 
     display: flex;
-
     justify-content: center;
     align-items: center;
 
     width: 100%;
   }
 
-
   /* =========================
      NOMBRE ANTON GORBACH
-
      CADA PALABRA TIENE SU
      PROPIO DUPLICADO MAGENTA
   ========================= */
 
   &__intro-name {
-
     position: relative;
 
     margin: 0;
@@ -252,7 +241,6 @@
     max-width: 90vw;
 
     display: flex;
-
     justify-content: center;
     align-items: center;
 
@@ -261,19 +249,14 @@
     will-change: filter, opacity;
 
     span {
-
       position: relative;
-
       display: inline-block;
-
       color: #fff;
 
       &::after {
-
         content: attr(data-text);
 
         position: absolute;
-
         left: 0;
         top: 0;
 
@@ -287,23 +270,19 @@
         z-index: -1;
 
         pointer-events: none;
-
         user-select: none;
       }
     }
   }
-
 
   /* =========================
      FOOTER DE PORTADA
   ========================= */
 
   &__intro-footer {
-
     position: absolute;
 
     bottom: 5%;
-
     left: 50%;
 
     transform: translateX(-50%);
@@ -319,16 +298,13 @@
     white-space: nowrap;
   }
 
-
   /* =========================
      NOMBRE DEL PROCEDIMIENTO
-
      DESKTOP:
      PARTE MEDIA-ALTA
   ========================= */
 
   &__procedure {
-
     position: absolute;
 
     z-index: 5;
@@ -339,7 +315,6 @@
     width: 100%;
 
     display: flex;
-
     justify-content: center;
     align-items: center;
 
@@ -348,7 +323,6 @@
     pointer-events: none;
 
     span {
-
       position: relative;
 
       font-family: 'UnifrakturMaguntia', cursive;
@@ -370,24 +344,20 @@
       letter-spacing: 0.02em;
 
       width: max-content;
-
       max-width: 100%;
 
       display: block;
 
       will-change: filter, opacity;
 
-
       /* =========================
          TEXTO DUPLICADO MAGENTA
       ========================= */
 
       &::after {
-
         content: attr(data-text);
 
         position: absolute;
-
         left: 0;
         top: 0;
 
@@ -401,7 +371,6 @@
         z-index: -1;
 
         pointer-events: none;
-
         user-select: none;
 
         text-align: center;
@@ -409,15 +378,12 @@
     }
   }
 
-
   /* =========================
      TÍTULO QUE SALE
   ========================= */
 
   &__procedure--out {
-
     span {
-
       animation:
         procedure-out
         800ms
@@ -426,15 +392,12 @@
     }
   }
 
-
   /* =========================
      TÍTULO QUE ENTRA
   ========================= */
 
   &__procedure--in {
-
     span {
-
       animation:
         procedure-in
         800ms
@@ -443,19 +406,16 @@
     }
   }
 
-
   /* =========================
      FRANJAS NEGRAS
   ========================= */
 
   &__frame {
-
     position: absolute;
 
     left: 0;
 
     width: 100%;
-
     height: 32%;
 
     z-index: 4;
@@ -465,13 +425,11 @@
     will-change: opacity;
   }
 
-
   /* =========================
      FRANJA SUPERIOR
   ========================= */
 
   &__frame--top {
-
     top: 0;
 
     background: linear-gradient(
@@ -483,13 +441,11 @@
     );
   }
 
-
   /* =========================
      FRANJA INFERIOR
   ========================= */
 
   &__frame--bottom {
-
     bottom: 0;
 
     background: linear-gradient(
@@ -501,13 +457,11 @@
     );
   }
 
-
   /* =========================
      ENTRADA DE FRANJAS
   ========================= */
 
   &__frame--entering {
-
     animation:
       frame-enter
       800ms
@@ -515,54 +469,37 @@
       forwards;
   }
 
-
   /* =========================
      TRANSICIÓN FOTOGRÁFICA
   ========================= */
 
   @keyframes image-out {
-
     0% {
-
       transform: scale(1);
-
       filter: blur(0);
-
       opacity: 1;
     }
 
     100% {
-
       transform: scale(0.96);
-
       filter: blur(8px);
-
       opacity: 0;
     }
   }
-
 
   @keyframes image-in {
-
     0% {
-
       transform: scale(1.04);
-
       filter: blur(8px);
-
       opacity: 0;
     }
 
     100% {
-
       transform: scale(1);
-
       filter: blur(0);
-
       opacity: 1;
     }
   }
-
 
   /* =========================
      PROCEDIMIENTO QUE SALE
@@ -570,22 +507,16 @@
   ========================= */
 
   @keyframes procedure-out {
-
     from {
-
       opacity: 1;
-
       filter: blur(0);
     }
 
     to {
-
       opacity: 0;
-
       filter: blur(20px);
     }
   }
-
 
   /* =========================
      PROCEDIMIENTO QUE ENTRA
@@ -593,85 +524,63 @@
   ========================= */
 
   @keyframes procedure-in {
-
     from {
-
       opacity: 0;
-
       filter: blur(20px);
     }
 
     to {
-
       opacity: 1;
-
       filter: blur(0);
     }
   }
-
 
   /* =========================
      ENTRADA DE FRANJAS
   ========================= */
 
   @keyframes frame-enter {
-
     0% {
-
       opacity: 0;
     }
 
     100% {
-
       opacity: 1;
     }
   }
-
 
   /* =========================
      ANIMACIÓN PORTADA
   ========================= */
 
   @keyframes intro-content-reveal {
-
     from {
-
       opacity: 0;
-
       filter: blur(20px);
     }
 
     to {
-
       opacity: 1;
-
       filter: blur(0);
     }
   }
-
 
   /* =========================
      TABLET
   ========================= */
 
   @media (max-width: 768px) {
-
     &__image-container {
-
       width: 90%;
-
       height: 80%;
     }
-
 
     /* =========================
        HEADER TABLET
     ========================= */
 
     &__intro-header {
-
       top: 15%;
-
       left: 7%;
 
       font-size: 0.85rem;
@@ -679,23 +588,18 @@
       letter-spacing: 0.3em;
     }
 
-
     /* =========================
        NOMBRE TABLET
     ========================= */
 
     &__intro-title {
-
       left: 50%;
-
       top: 69%;
 
       transform: translate(-50%, -50%);
     }
 
-
     &__intro-name {
-
       font-size: clamp(
         3.5rem,
         10vw,
@@ -703,13 +607,11 @@
       );
     }
 
-
     /* =========================
        FOOTER TABLET
     ========================= */
 
     &__intro-footer {
-
       bottom: 6%;
 
       gap: 1.5rem;
@@ -719,21 +621,17 @@
       letter-spacing: 0.15em;
     }
 
-
     /* =========================
        PROCEDIMIENTO TABLET
     ========================= */
 
     &__procedure {
-
       left: 50%;
-
       top: 40%;
 
       transform: translate(-50%, -50%);
 
       span {
-
         font-size: clamp(
           2.8rem,
           8vw,
@@ -744,40 +642,31 @@
       }
     }
 
-
     /* =========================
        FRANJAS TABLET
     ========================= */
 
     &__frame {
-
       height: 34%;
     }
   }
-
 
   /* =========================
      MOBILE
   ========================= */
 
   @media (max-width: 480px) {
-
     &__image-container {
-
       width: 100%;
-
       height: 100%;
     }
-
 
     /* =========================
        HEADER MOBILE
     ========================= */
 
     &__intro-header {
-
       top: 12%;
-
       left: 6%;
 
       font-size: 1rem;
@@ -785,24 +674,19 @@
       letter-spacing: 0.3em;
     }
 
-
     /* =========================
        NOMBRE MOBILE
        PARTE MEDIA-BAJA
     ========================= */
 
     &__intro-title {
-
       left: 50%;
-
       top: 77%;
 
       transform: translate(-50%, -50%);
     }
 
-
     &__intro-name {
-
       font-size: clamp(
         3.2rem,
         14vw,
@@ -818,23 +702,19 @@
       text-align: center;
 
       span {
-
         display: block;
 
         &::after {
-
           transform: translateY(7px);
         }
       }
     }
-
 
     /* =========================
        FOOTER MOBILE
     ========================= */
 
     &__intro-footer {
-
       bottom: 5%;
 
       gap: 1rem;
@@ -844,22 +724,18 @@
       letter-spacing: 0.15em;
     }
 
-
     /* =========================
        PROCEDIMIENTO MOBILE
        PARTE MEDIA-ALTA
     ========================= */
 
     &__procedure {
-
       left: 50%;
-
       top: 27%;
 
       transform: translate(-50%, -50%);
 
       span {
-
         font-size: 3rem;
 
         white-space: normal;
@@ -867,25 +743,20 @@
         text-align: center;
 
         width: max-content;
-
         max-width: 100%;
 
         &::after {
-
           transform: translateY(7px);
-
           text-align: center;
         }
       }
     }
-
 
     /* =========================
        FRANJAS MOBILE
     ========================= */
 
     &__frame {
-
       height: 70%;
     }
   }

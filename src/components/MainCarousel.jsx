@@ -49,10 +49,20 @@ const MainCarousel = ({ onFinish }) => {
     },
   ];
 
+  // ==========================================
+  // ESTADOS
+  // ==========================================
+
   const [currentImage, setCurrentImage] = useState(0);
+
   const [isTransitioning, setIsTransitioning] = useState(false);
+
   const [isIntroVideoPlaying, setIsIntroVideoPlaying] =
     useState(true);
+
+  // Controla cuándo la primera imagen aparece
+  // durante los últimos 200ms del video.
+  const [showFirstSlide, setShowFirstSlide] = useState(false);
 
   const videoRef = useRef(null);
 
@@ -122,10 +132,52 @@ const MainCarousel = ({ onFinish }) => {
   }, [isDesktop, isIntroVideoPlaying]);
 
   // ==========================================
+  // MOSTRAR PRIMER SLIDE 200ms ANTES
+  // ==========================================
+
+  useEffect(() => {
+    if (!isIntroVideoPlaying) {
+      return;
+    }
+
+    const video = videoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    let animationFrame;
+
+    const checkVideoTime = () => {
+      if (
+        video.duration &&
+        video.duration - video.currentTime <= 0.2
+      ) {
+        setShowFirstSlide(true);
+        return;
+      }
+
+      animationFrame =
+        requestAnimationFrame(checkVideoTime);
+    };
+
+    animationFrame =
+      requestAnimationFrame(checkVideoTime);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [isIntroVideoPlaying]);
+
+  // ==========================================
   // FINAL DEL VIDEO
   // ==========================================
 
   const handleIntroVideoEnded = () => {
+    // Nos aseguramos de que la imagen ya esté visible
+    // antes de desmontar el video.
+    setShowFirstSlide(true);
+
     setIsIntroVideoPlaying(false);
   };
 
@@ -141,6 +193,10 @@ const MainCarousel = ({ onFinish }) => {
     const introDuration = 3800;
     const slideDuration = 900;
     const transitionDuration = 800;
+
+    // ==========================================
+    // FINAL DEL CARRUSEL
+    // ==========================================
 
     if (currentImage === slides.length - 1) {
       const finishTimeout = setTimeout(() => {
@@ -158,6 +214,10 @@ const MainCarousel = ({ onFinish }) => {
         : slideDuration;
 
     let transitionTimeout;
+
+    // ==========================================
+    // CAMBIO DE SLIDE
+    // ==========================================
 
     const slideTimeout = setTimeout(() => {
       setIsTransitioning(true);
@@ -183,7 +243,7 @@ const MainCarousel = ({ onFinish }) => {
   ]);
 
   // ==========================================
-  // SLIDES
+  // SLIDES ACTUALES
   // ==========================================
 
   const currentSlide = slides[currentImage];
@@ -204,6 +264,7 @@ const MainCarousel = ({ onFinish }) => {
           {title.map((line, index) => (
             <React.Fragment key={index}>
               {line}
+
               {index < title.length - 1 && <br />}
             </React.Fragment>
           ))}
@@ -235,6 +296,31 @@ const MainCarousel = ({ onFinish }) => {
 
       {isIntroVideoPlaying && (
         <div className="main-carousel__intro-video">
+
+          {/* ==================================
+              PRIMER SLIDE PRE-CARGADO
+
+              Permanece invisible mientras
+              reproduce el video.
+
+              Se vuelve visible durante los
+              últimos 200ms.
+          ================================== */}
+
+          <img
+            className={`main-carousel__preload-slide ${
+              showFirstSlide
+                ? 'main-carousel__preload-slide--visible'
+                : ''
+            }`}
+            src={currentSlide.image}
+            alt=""
+          />
+
+          {/* ==================================
+              VIDEO
+          ================================== */}
+
           <video
             ref={videoRef}
             key={
@@ -253,18 +339,21 @@ const MainCarousel = ({ onFinish }) => {
             preload="auto"
             onEnded={handleIntroVideoEnded}
           />
+
         </div>
       )}
 
       {/* ======================================
           TODO EL CARRUSEL
+
           SE MONTA DESPUÉS DEL VIDEO
       ====================================== */}
 
       {!isIntroVideoPlaying && (
         <>
-
-          {/* FOTOGRAFÍA */}
+          {/* ==================================
+              FOTOGRAFÍA
+          ================================== */}
 
           <div className="main-carousel__image-container">
 
@@ -282,9 +371,10 @@ const MainCarousel = ({ onFinish }) => {
             <img
               className={`
                 main-carousel__image
-                ${isTransitioning
-                  ? 'main-carousel__image--in'
-                  : ''
+                ${
+                  isTransitioning
+                    ? 'main-carousel__image--in'
+                    : ''
                 }
               `}
               src={
@@ -297,7 +387,9 @@ const MainCarousel = ({ onFinish }) => {
 
           </div>
 
-          {/* FRANJAS */}
+          {/* ==================================
+              FRANJAS
+          ================================== */}
 
           {(currentImage > 0 || isTransitioning) && (
             <>
@@ -317,11 +409,14 @@ const MainCarousel = ({ onFinish }) => {
             </>
           )}
 
-          {/* TÍTULO ACTUAL */}
+          {/* ==================================
+              TÍTULO ACTUAL
+          ================================== */}
 
           {!isTransitioning &&
             currentSlide.title && (
               <div className="main-carousel__procedure">
+
                 <span
                   data-text={getTitleText(
                     currentSlide.title
@@ -331,10 +426,13 @@ const MainCarousel = ({ onFinish }) => {
                     currentSlide.title
                   )}
                 </span>
+
               </div>
             )}
 
-          {/* TÍTULO QUE SALE */}
+          {/* ==================================
+              TÍTULO QUE SALE
+          ================================== */}
 
           {isTransitioning &&
             currentSlide.title && (
@@ -344,6 +442,7 @@ const MainCarousel = ({ onFinish }) => {
                   main-carousel__procedure--out
                 "
               >
+
                 <span
                   data-text={getTitleText(
                     currentSlide.title
@@ -353,10 +452,13 @@ const MainCarousel = ({ onFinish }) => {
                     currentSlide.title
                   )}
                 </span>
+
               </div>
             )}
 
-          {/* TÍTULO QUE ENTRA */}
+          {/* ==================================
+              TÍTULO QUE ENTRA
+          ================================== */}
 
           {isTransitioning &&
             nextSlide.title && (
@@ -366,6 +468,7 @@ const MainCarousel = ({ onFinish }) => {
                   main-carousel__procedure--in
                 "
               >
+
                 <span
                   data-text={getTitleText(
                     nextSlide.title
@@ -375,10 +478,13 @@ const MainCarousel = ({ onFinish }) => {
                     nextSlide.title
                   )}
                 </span>
+
               </div>
             )}
 
-          {/* CONTENIDO DEL PRIMER SLIDE */}
+          {/* ==================================
+              CONTENIDO DEL PRIMER SLIDE
+          ================================== */}
 
           {currentImage === 0 && (
             <div
@@ -387,29 +493,48 @@ const MainCarousel = ({ onFinish }) => {
                 main-carousel__slide--intro
               "
             >
+
               <div className="main-carousel__intro-content">
+
+                {/* HEADER */}
 
                 <div className="main-carousel__intro-header">
                   <span>BODY MODIFICATION</span>
                   <span>TATTOO ARTIST</span>
                 </div>
 
+                {/* NOMBRE */}
+
                 <div className="main-carousel__intro-title">
+
                   <p className="main-carousel__intro-name">
-                    <span data-text="Anton">Anton</span>
-                    <span data-text="Gorbach">Gorbach</span>
+
+                    <span data-text="Anton">
+                      Anton
+                    </span>
+
+                    <span data-text="Gorbach">
+                      Gorbach
+                    </span>
+
                   </p>
+
                 </div>
 
+                {/* FOOTER */}
+
                 <footer className="main-carousel__intro-footer">
+
                   <span>PUEBLA</span>
                   <span>CDMX</span>
                   <span>GUADALAJARA</span>
+
                 </footer>
 
               </div>
 
               <div className="main-carousel__intro-reveal" />
+
             </div>
           )}
 
