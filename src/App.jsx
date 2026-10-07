@@ -5,15 +5,15 @@ import './App.scss';
 import MainCarousel from './components/MainCarousel';
 import BookingForm from './components/BookingForm';
 import ProcedureGrid from './components/ProcedureGrid';
+import Footer from './components/Footer';
 
 function App() {
   const [showMain, setShowMain] = useState(false);
 
   return (
     <main
-      className={`app ${
-        showMain ? 'app--main-visible' : ''
-      }`}
+      className={`app ${showMain ? 'app--main-visible' : ''
+        }`}
     >
 
       {/* ==========================================
@@ -47,6 +47,8 @@ function App() {
         <section className="app__procedures">
           <ProcedureGrid />
         </section>
+
+        <Footer />
 
       </div>
 
