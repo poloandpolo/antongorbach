@@ -6,6 +6,7 @@ import MainCarousel from './components/MainCarousel';
 import BookingForm from './components/BookingForm';
 import ProcedureGrid from './components/ProcedureGrid';
 import Footer from './components/Footer';
+import ArtistBio from './components/ArtistBio';
 
 function App() {
   const [showMain, setShowMain] = useState(false);
@@ -41,12 +42,15 @@ function App() {
           <BookingForm />
         </section>
 
+        <div className="app__background">
+          <section id="app_artist" className="app_artist">
+            <ArtistBio />
+          </section>
 
-        {/* PROCEDIMIENTOS */}
-
-        <section className="app__procedures">
-          <ProcedureGrid />
-        </section>
+          <section id="app_procedures" className="app_procedures">
+            <ProcedureGrid />
+          </section>
+        </div>
 
         <Footer />
 
