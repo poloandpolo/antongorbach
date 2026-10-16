@@ -93,6 +93,26 @@
   overflow: hidden;
   margin: auto;
 
+  &__link {
+    display: block;
+    width: 100%;
+    color: inherit;
+    text-decoration: none;
+    outline-offset: 5px;
+
+    &:link,
+    &:visited,
+    &:hover,
+    &:active {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 1px solid rgba(255, 255, 255, 0.8);
+    }
+  }
+
   /* =====================================================
      IMAGEN
   ===================================================== */
@@ -150,22 +170,35 @@
       line-height: 0.95;
       color: #fff;
       letter-spacing: 0.02em;
+      text-decoration: none;
+      border-bottom: none;
     }
+  }
 
-    button {
-      flex-shrink: 0;
-      padding: 12px 20px;
-      border: 1px solid #fff;
-      background: transparent;
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      cursor: pointer;
-      transition:
-        background 300ms ease,
-        color 300ms ease;
-    }
+  /* =====================================================
+     BOTÓN SABER MÁS
+  ===================================================== */
+
+  &__button {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    background: transparent;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background 300ms ease,
+      color 300ms ease,
+      border-color 300ms ease;
   }
 
   /* =====================================================
@@ -181,10 +214,19 @@
     }
 
     .procedure-card__content {
-      button {
+      .procedure-card__button {
         background: #fff;
+        border-color: #fff;
         color: #000;
       }
+    }
+  }
+
+  &:focus-within {
+    .procedure-card__button {
+      background: #fff;
+      border-color: #fff;
+      color: #000;
     }
   }
 }
@@ -236,10 +278,10 @@
       h3 {
         font-size: clamp(2.3rem, 9vw, 4rem);
       }
+    }
 
-      button {
-        padding: 11px 17px;
-      }
+    &__button {
+      padding: 11px 17px;
     }
   }
 }
@@ -290,6 +332,8 @@
   /* CARD */
 
   .procedure-card {
+    width: 100%;
+
     &__image {
       aspect-ratio: 1 / 1;
     }
@@ -302,12 +346,27 @@
       h3 {
         font-size: 2rem;
       }
-
-      button {
-        padding: 10px 14px;
-        font-size: 0.55rem;
-        letter-spacing: 0.15em;
-      }
     }
+
+    &__button {
+      padding: 10px 14px;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+    }
+  }
+}
+
+/* =========================================================
+   REDUCIR MOVIMIENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .procedure-card__image img,
+  .procedure-card__button {
+    transition: none;
+  }
+
+  .procedure-grid p.procedure-description-visible {
+    animation: none;
   }
 }
