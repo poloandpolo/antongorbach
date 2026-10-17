@@ -1,6 +1,6 @@
-
+import { useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import SlickModule from 'react-slick';
-import { Link } from 'react-router-dom';
 
 import './styles/ProceduresEyeball.scss';
 
@@ -13,6 +13,16 @@ import Footer from '../components/Footer';
 const Slider = SlickModule.default ?? SlickModule;
 
 export default function ProceduresEyeball() {
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant',
+        });
+    }, [location.pathname]);
+
     const settings = {
         dots: true,
         infinite: true,
@@ -28,10 +38,10 @@ export default function ProceduresEyeball() {
 
     return (
         <main className="procedures-eyeball">
-            {/* Navegación de regreso */}
             <header className="procedures-eyeball__header">
                 <Link
-                    to="/#app_procedures"
+                    to="/"
+                    state={{ scrollToProcedures: true }}
                     className="procedures-eyeball__back"
                     aria-label="Volver a explorar los procedimientos"
                 >
@@ -40,7 +50,6 @@ export default function ProceduresEyeball() {
                 </Link>
             </header>
 
-            {/* Slider principal */}
             <section className="procedures-eyeball__slider">
                 <Slider {...settings}>
                     <div className="procedures-eyeball__slide">
@@ -66,7 +75,6 @@ export default function ProceduresEyeball() {
                 </Slider>
             </section>
 
-            {/* Descripción */}
             <section className="procedures-eyeball__description">
                 <span className="procedures-eyeball__eyebrow">
                     ANTON GORBACH · BODY MODIFICATION
@@ -94,12 +102,10 @@ export default function ProceduresEyeball() {
                 </p>
             </section>
 
-            {/* Formulario a ancho completo */}
             <section className="procedures-eyeball__booking">
                 <BookingForm />
             </section>
 
-            {/* Footer a ancho completo */}
             <section className="procedures-eyeball__footer">
                 <Footer />
             </section>

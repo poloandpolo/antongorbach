@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import SlickModule from 'react-slick';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import './styles/ProceduresToungeSplit.scss';
 
@@ -12,6 +13,16 @@ import Footer from '../components/Footer';
 const Slider = SlickModule.default ?? SlickModule;
 
 export default function ProceduresTongueSplit() {
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant',
+        });
+    }, [location.pathname]);
+
     const settings = {
         dots: true,
         infinite: true,
@@ -27,10 +38,10 @@ export default function ProceduresTongueSplit() {
 
     return (
         <main className="procedures-tongue-split">
-            {/* Navegación de regreso */}
             <header className="procedures-tongue-split__header">
                 <Link
-                    to="/#app_procedures"
+                    to="/"
+                    state={{ scrollToProcedures: true }}
                     className="procedures-tongue-split__back"
                     aria-label="Volver a explorar los procedimientos"
                 >
@@ -39,7 +50,6 @@ export default function ProceduresTongueSplit() {
                 </Link>
             </header>
 
-            {/* Slider principal */}
             <section className="procedures-tongue-split__slider">
                 <Slider {...settings}>
                     <div className="procedures-tongue-split__slide">
@@ -65,7 +75,6 @@ export default function ProceduresTongueSplit() {
                 </Slider>
             </section>
 
-            {/* Descripción */}
             <section className="procedures-tongue-split__description">
                 <span className="procedures-tongue-split__eyebrow">
                     ANTON GORBACH · BODY MODIFICATION
@@ -95,12 +104,10 @@ export default function ProceduresTongueSplit() {
                 </p>
             </section>
 
-            {/* Formulario a ancho completo */}
             <section className="procedures-tongue-split__booking">
                 <BookingForm />
             </section>
 
-            {/* Footer a ancho completo */}
             <section className="procedures-tongue-split__footer">
                 <Footer />
             </section>

@@ -1,6 +1,6 @@
-
+import { useEffect } from 'react';
 import SlickModule from 'react-slick';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import './styles/ProceduresScarification.scss';
 
@@ -13,6 +13,16 @@ import Footer from '../components/Footer';
 const Slider = SlickModule.default ?? SlickModule;
 
 export default function ProceduresScarification() {
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant',
+        });
+    }, [location.pathname]);
+
     const settings = {
         dots: true,
         infinite: true,
@@ -28,10 +38,10 @@ export default function ProceduresScarification() {
 
     return (
         <main className="procedures-scarification">
-            {/* Navegación de regreso */}
             <header className="procedures-scarification__header">
                 <Link
-                    to="/#app_procedures"
+                    to="/"
+                    state={{ scrollToProcedures: true }}
                     className="procedures-scarification__back"
                     aria-label="Volver a explorar los procedimientos"
                 >
@@ -40,7 +50,6 @@ export default function ProceduresScarification() {
                 </Link>
             </header>
 
-            {/* Slider principal */}
             <section className="procedures-scarification__slider">
                 <Slider {...settings}>
                     <div className="procedures-scarification__slide">
@@ -66,7 +75,6 @@ export default function ProceduresScarification() {
                 </Slider>
             </section>
 
-            {/* Descripción */}
             <section className="procedures-scarification__description">
                 <span className="procedures-scarification__eyebrow">
                     ANTON GORBACH · BODY MODIFICATION
@@ -96,12 +104,10 @@ export default function ProceduresScarification() {
                 </p>
             </section>
 
-            {/* Formulario a ancho completo */}
             <section className="procedures-scarification__booking">
                 <BookingForm />
             </section>
 
-            {/* Footer a ancho completo */}
             <section className="procedures-scarification__footer">
                 <Footer />
             </section>

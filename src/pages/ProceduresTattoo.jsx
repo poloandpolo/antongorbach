@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import SlickModule from 'react-slick';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import './styles/ProceduresTattoo.scss';
 
@@ -12,6 +13,16 @@ import Footer from '../components/Footer';
 const Slider = SlickModule.default ?? SlickModule;
 
 export default function ProceduresTattoo() {
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant',
+        });
+    }, [location.pathname]);
+
     const settings = {
         dots: true,
         infinite: true,
@@ -27,10 +38,10 @@ export default function ProceduresTattoo() {
 
     return (
         <main className="procedures-tattoo">
-            {/* Navegación de regreso */}
             <header className="procedures-tattoo__header">
                 <Link
-                    to="/#app_procedures"
+                    to="/"
+                    state={{ scrollToProcedures: true }}
                     className="procedures-tattoo__back"
                     aria-label="Volver a explorar los procedimientos"
                 >
@@ -39,7 +50,6 @@ export default function ProceduresTattoo() {
                 </Link>
             </header>
 
-            {/* Slider principal */}
             <section className="procedures-tattoo__slider">
                 <Slider {...settings}>
                     <div className="procedures-tattoo__slide">
@@ -65,7 +75,6 @@ export default function ProceduresTattoo() {
                 </Slider>
             </section>
 
-            {/* Descripción */}
             <section className="procedures-tattoo__description">
                 <span className="procedures-tattoo__eyebrow">
                     ANTON GORBACH · TATTOO ARTIST
@@ -96,12 +105,10 @@ export default function ProceduresTattoo() {
                 </p>
             </section>
 
-            {/* Formulario a ancho completo */}
             <section className="procedures-tattoo__booking">
                 <BookingForm />
             </section>
 
-            {/* Footer a ancho completo */}
             <section className="procedures-tattoo__footer">
                 <Footer />
             </section>

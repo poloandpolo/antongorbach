@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 import './App.scss';
 
@@ -16,7 +16,30 @@ import ProceduresSubdermalImplant from './pages/ProceduresSubdermalImplant';
 import ProceduresTattoo from './pages/ProceduresTattoo';
 
 function HomePage() {
-    const [showMain, setShowMain] = useState(false);
+    const [showMain, setShowMain] = useState(
+        () => sessionStorage.getItem('mainCarouselFinished') === 'true'
+    );
+
+    const location = useLocation();
+
+    useEffect(() => {
+        if (showMain) {
+            sessionStorage.setItem('mainCarouselFinished', 'true');
+        }
+    }, [showMain]);
+
+    useEffect(() => {
+        if (location.state?.scrollToProcedures && showMain) {
+            requestAnimationFrame(() => {
+                document.getElementById('app_procedures')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+            });
+
+            window.history.replaceState({}, document.title);
+        }
+    }, [location, showMain]);
 
     return (
         <main
@@ -24,11 +47,13 @@ function HomePage() {
                 showMain ? 'app--main-visible' : ''
             }`}
         >
-            <div className="app__carousel">
-                <MainCarousel
-                    onFinish={() => setShowMain(true)}
-                />
-            </div>
+            {!showMain && (
+                <div className="app__carousel">
+                    <MainCarousel
+                        onFinish={() => setShowMain(true)}
+                    />
+                </div>
+            )}
 
             <div className="app__main">
                 <section className="app__booking">
