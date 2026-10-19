@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+
+import { useEffect, useState } from 'react';
 import SlickModule from 'react-slick';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -9,11 +10,32 @@ import 'slick-carousel/slick/slick-theme.css';
 
 import BookingForm from '../components/BookingForm';
 import Footer from '../components/Footer';
+import CouponButton from '../components/CouponButton';
+import CouponListModal from '../components/CouponListModal';
+import useProcedureCoupon from '../hooks/useProcedureCoupon';
 
 const Slider = SlickModule.default ?? SlickModule;
 
+const COUPONS = [
+    {
+        code: 'SCAR50',
+        discount: 50,
+        title: 'Scarification',
+        description: '50% de descuento en escarificación. Vigencia de 4 meses desde su asignación.',
+    },
+];
+
 export default function ProceduresScarification() {
     const location = useLocation();
+
+    const [showCouponList, setShowCouponList] = useState(false);
+    const [formCoupon, setFormCoupon] = useState('');
+
+    const automaticCoupon = useProcedureCoupon(
+        location.pathname,
+        'SCAR50',
+        4 * 30 * 24 // 4 meses aproximados, en horas
+    );
 
     useEffect(() => {
         window.scrollTo({
@@ -22,6 +44,26 @@ export default function ProceduresScarification() {
             behavior: 'instant',
         });
     }, [location.pathname]);
+
+    useEffect(() => {
+        if (automaticCoupon) {
+            setFormCoupon(automaticCoupon);
+        }
+    }, [automaticCoupon]);
+
+    const handleUseCoupon = (coupon) => {
+        setFormCoupon(coupon.code);
+        setShowCouponList(false);
+
+        requestAnimationFrame(() => {
+            document
+                .getElementById('scarification-booking')
+                ?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+        });
+    };
 
     const settings = {
         dots: true,
@@ -38,6 +80,11 @@ export default function ProceduresScarification() {
 
     return (
         <main className="procedures-scarification">
+            <CouponButton
+                count={COUPONS.length}
+                onClick={() => setShowCouponList(true)}
+            />
+
             <header className="procedures-scarification__header">
                 <Link
                     to="/"
@@ -104,13 +151,23 @@ export default function ProceduresScarification() {
                 </p>
             </section>
 
-            <section className="procedures-scarification__booking">
-                <BookingForm />
+            <section
+                id="scarification-booking"
+                className="procedures-scarification__booking"
+            >
+                <BookingForm initialCoupon={formCoupon} />
             </section>
 
             <section className="procedures-scarification__footer">
                 <Footer />
             </section>
+
+            <CouponListModal
+                isOpen={showCouponList}
+                onClose={() => setShowCouponList(false)}
+                coupons={COUPONS}
+                onUseCoupon={handleUseCoupon}
+            />
         </main>
     );
 }

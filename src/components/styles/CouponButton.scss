@@ -1,0 +1,173 @@
+
+.coupon-button {
+    position: fixed;
+    top: 22px;
+    right: 24px;
+    z-index: 9990;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 46px;
+    padding: 10px 15px;
+
+    border: 1px solid rgba(217, 45, 92, 0.75);
+    border-radius: 2px;
+
+    background: linear-gradient(
+        115deg,
+        rgba(23, 7, 20, 0.96),
+        rgba(35, 10, 39, 0.96)
+    );
+
+    color: #f7eaf1;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    isolation: isolate;
+    overflow: hidden;
+
+    box-shadow:
+        0 0 12px rgba(153, 16, 64, 0.14),
+        inset 0 0 12px rgba(104, 21, 133, 0.08);
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease,
+        background 0.25s ease;
+
+    &__icon {
+        position: relative;
+        z-index: 1;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 20px;
+        height: 20px;
+        color: #e12d59;
+
+        transition:
+            color 0.25s ease,
+            transform 0.25s ease;
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__label {
+        position: relative;
+        z-index: 1;
+        white-space: nowrap;
+    }
+
+    &__count {
+        position: relative;
+        z-index: 1;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 19px;
+        height: 19px;
+        padding: 0 5px;
+
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 50%;
+
+        background: #a5103e;
+        color: #fff;
+
+        font-size: 10px;
+        line-height: 1;
+        letter-spacing: 0;
+    }
+
+    &__glow {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+
+        background: linear-gradient(
+            110deg,
+            rgba(165, 16, 62, 0.16),
+            rgba(103, 29, 128, 0.2)
+        );
+
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: #f05a83;
+
+        box-shadow:
+            0 0 20px rgba(209, 33, 100, 0.24),
+            0 0 32px rgba(103, 29, 128, 0.15);
+
+        .coupon-button__icon {
+            color: #ff789b;
+            transform: rotate(-8deg) scale(1.08);
+        }
+
+        .coupon-button__glow {
+            opacity: 1;
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid #f05a83;
+        outline-offset: 4px;
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+}
+
+@media (max-width: 600px) {
+    .coupon-button {
+        top: 14px;
+        right: 14px;
+        gap: 8px;
+
+        min-height: 42px;
+        padding: 9px 11px;
+
+        font-size: 10px;
+        letter-spacing: 0.1em;
+
+        &__icon {
+            width: 19px;
+            height: 19px;
+        }
+
+        &__count {
+            min-width: 17px;
+            height: 17px;
+            font-size: 9px;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .coupon-button,
+    .coupon-button__icon,
+    .coupon-button__glow {
+        transition: none;
+    }
+}

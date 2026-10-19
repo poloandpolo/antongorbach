@@ -1,0 +1,48 @@
+
+export const COUPONS = [
+    {
+        code: 'EYEBALL60',
+        procedure: 'Eyeball Tattoo',
+        discount: 60,
+        image: 'https://res.cloudinary.com/djir3xi7x/image/upload/v1792443684/WhatsApp_Image_2026-09-21_at_4.31.14_PM_eyxeiz.jpg',
+        validityMonths: 6,
+        description: 'Promoción de tatuaje escleral.',
+        automatic: true,
+    },
+    {
+        code: 'SCAR50',
+        procedure: 'Scarification',
+        discount: 50,
+        image: 'https://res.cloudinary.com/djir3xi7x/image/upload/v1792443696/WhatsApp_Image_2026-09-21_at_4.31.19_PM_b1zhgz.jpg',
+        validityMonths: 4,
+        description: '50% de descuento en escarificación.',
+        automatic: false,
+    },
+    {
+        code: 'TONGUE60',
+        procedure: 'Tongue Split',
+        discount: 60,
+        image: 'https://res.cloudinary.com/djir3xi7x/image/upload/v1792443719/WhatsApp_Image_2026-09-21_at_4.31.56_PM_n7b1bo.jpg',
+        validityMonths: 2,
+        description: 'Promoción de tongue split.',
+        automatic: false,
+    },
+    {
+        code: 'IMPLANT60',
+        procedure: 'Subdermal Implant',
+        discount: 60,
+        image: 'https://res.cloudinary.com/djir3xi7x/image/upload/v1792443706/WhatsApp_Image_2026-09-21_at_4.30.48_PM_ag7yew.jpg',
+        validityMonths: 1,
+        description: 'Promoción de implantes subdérmicos.',
+        automatic: false,
+    },
+    {
+        code: 'TATTOO60',
+        procedure: 'Tattoo',
+        discount: 60,
+        image: 'https://res.cloudinary.com/djir3xi7x/image/upload/v1792443673/WhatsApp_Image_2026-09-21_at_4.30.46_PM_nxoeqf.jpg',
+        validityMonths: 3,
+        description: 'Promoción de tatuajes.',
+        automatic: false,
+    },
+];

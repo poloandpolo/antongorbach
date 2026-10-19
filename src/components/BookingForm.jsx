@@ -1,153 +1,218 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './styles/BookingForm.scss';
 
-const BookingForm = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    description: '',
-    reference: null,
-  });
+const COUPON_TO_USE_KEY = 'couponToUse';
 
-  const handleChange = (event) => {
-    const { name, value, files } = event.target;
+const getSavedCoupon = () => {
+    try {
+        return (
+            localStorage.getItem(COUPON_TO_USE_KEY) ||
+            sessionStorage.getItem(COUPON_TO_USE_KEY) ||
+            ''
+        );
+    } catch {
+        return '';
+    }
+};
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: files ? files[0] : value,
-    }));
-  };
+const BookingForm = ({ initialCoupon = '' }) => {
+    const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        email: '',
+        description: '',
+        reference: null,
+        coupon: initialCoupon || getSavedCoupon(),
+    });
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+    // Sincronizar cuando cambie initialCoupon o se monte el formulario.
+    useEffect(() => {
+        const savedCoupon = initialCoupon || getSavedCoupon();
 
-    console.log(formData);
+        if (savedCoupon) {
+            setFormData((prev) => ({
+                ...prev,
+                coupon: savedCoupon,
+            }));
+        }
+    }, [initialCoupon]);
 
-    // Aquí posteriormente conectaremos
-    // el formulario con tu backend / API / WhatsApp.
-  };
+    // Escuchar los cupones seleccionados desde CouponListModal.
+    useEffect(() => {
+        const handleApplyCoupon = (event) => {
+            const couponCode =
+                typeof event.detail === 'string'
+                    ? event.detail
+                    : event.detail?.code;
 
-  return (
-    <section className="booking-form" id="booking">
-      <div className="booking-form__container">
+            if (!couponCode) return;
 
-        <header className="booking-form__header">
-          <h1 data-text="Agenda tu cita">
-            Agenda tu cita
-          </h1>
+            setFormData((prev) => ({
+                ...prev,
+                coupon: couponCode,
+            }));
+        };
 
-          <p>
-            Dile a Anton tu visión, agrega una referencia si la tienes
-          </p>
-        </header>
+        window.addEventListener('apply-coupon', handleApplyCoupon);
 
-        <form
-          className="booking-form__form"
-          onSubmit={handleSubmit}
-        >
-          {/* NOMBRE */}
+        // Comprobar otra vez por si se seleccionó el cupón
+        // antes de que este formulario se montara.
+        const savedCoupon = getSavedCoupon();
 
-          <div className="booking-form__field">
-            <label htmlFor="name">
-              Nombre
-            </label>
+        if (savedCoupon) {
+            setFormData((prev) => ({
+                ...prev,
+                coupon: savedCoupon,
+            }));
+        }
 
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        return () => {
+            window.removeEventListener(
+                'apply-coupon',
+                handleApplyCoupon
+            );
+        };
+    }, []);
 
-          {/* TELÉFONO */}
+    const handleChange = (event) => {
+        const { name, value, files } = event.target;
 
-          <div className="booking-form__field">
-            <label htmlFor="phone">
-              Número de teléfono
-            </label>
+        setFormData((prev) => ({
+            ...prev,
+            [name]: files ? files[0] : value,
+        }));
+    };
 
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
+    const handleSubmit = (event) => {
+        event.preventDefault();
 
-          {/* EMAIL */}
+        console.log(formData);
 
-          <div className="booking-form__field">
-            <label htmlFor="email">
-              Email
-            </label>
+        // Posteriormente conectaremos el formulario
+        // con tu backend / API / WhatsApp.
+    };
 
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+    return (
+        <section className="booking-form" id="booking">
+            <div className="booking-form__container">
+                <header className="booking-form__header">
+                    <h1 data-text="Agenda tu cita">
+                        Agenda tu cita
+                    </h1>
 
-          {/* REFERENCIA */}
+                    <p>
+                        Dile a Anton tu visión, agrega una referencia si la tienes
+                    </p>
+                </header>
 
-          <div className="booking-form__field booking-form__field--file">
-            <label htmlFor="reference">
-              Imagen de referencia
-            </label>
+                <form
+                    className="booking-form__form"
+                    data-booking-form
+                    onSubmit={handleSubmit}
+                >
+                    <div className="booking-form__field">
+                        <label htmlFor="name">Nombre</label>
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-            <input
-              id="reference"
-              name="reference"
-              type="file"
-              accept="image/*"
-              onChange={handleChange}
-            />
+                    <div className="booking-form__field">
+                        <label htmlFor="phone">
+                            Número de teléfono
+                        </label>
+                        <input
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-            <span className="booking-form__file-text">
-              JPG, PNG, WEBP
-            </span>
-          </div>
+                    <div className="booking-form__field">
+                        <label htmlFor="email">Email</label>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-          {/* DESCRIPCIÓN */}
+                    <div className="booking-form__field booking-form__field--coupon">
+                        <label htmlFor="coupon">
+                            Código de cupón (opcional)
+                        </label>
 
-          <div className="booking-form__field">
-            <label htmlFor="description">
-              Descripción
-            </label>
+                        <input
+                            id="coupon"
+                            name="coupon"
+                            type="text"
+                            value={formData.coupon}
+                            onChange={handleChange}
+                            placeholder="Ej. EYEBALL60"
+                            autoComplete="off"
+                            spellCheck="false"
+                        />
 
-            <textarea
-              id="description"
-              name="description"
-              rows="5"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Cuéntale a Anton qué tienes en mente..."
-              required
-            />
-          </div>
+                        <span className="booking-form__file-text">
+                            ¿Tienes un cupón de descuento? Escríbelo aquí.
+                        </span>
+                    </div>
 
-          {/* BOTÓN */}
+                    <div className="booking-form__field booking-form__field--file">
+                        <label htmlFor="reference">
+                            Imagen de referencia
+                        </label>
 
-          <button
-            type="submit"
-            className="booking-form__submit"
-          >
-            Enviar solicitud
-          </button>
-        </form>
+                        <input
+                            id="reference"
+                            name="reference"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleChange}
+                        />
 
-      </div>
-    </section>
-  );
+                        <span className="booking-form__file-text">
+                            JPG, PNG, WEBP
+                        </span>
+                    </div>
+
+                    <div className="booking-form__field">
+                        <label htmlFor="description">
+                            Descripción
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="5"
+                            value={formData.description}
+                            onChange={handleChange}
+                            placeholder="Cuéntale a Anton qué tienes en mente..."
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="booking-form__submit"
+                    >
+                        Enviar solicitud
+                    </button>
+                </form>
+            </div>
+        </section>
+    );
 };
 
 export default BookingForm;

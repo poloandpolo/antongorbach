@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import SlickModule from 'react-slick';
 import { Link, useLocation } from 'react-router-dom';
@@ -10,10 +11,23 @@ import 'slick-carousel/slick/slick-theme.css';
 import BookingForm from '../components/BookingForm';
 import Footer from '../components/Footer';
 
+import useProcedureCoupon from '../hooks/useProcedureCoupon';
+import { COUPONS } from '../data/coupons';
+
 const Slider = SlickModule.default ?? SlickModule;
 
 export default function ProceduresTongueSplit() {
     const location = useLocation();
+
+    const couponConfig = COUPONS.find(
+        coupon => coupon.code === 'TONGUE60'
+    );
+
+    useProcedureCoupon(
+        location.pathname,
+        couponConfig?.code,
+        couponConfig?.validityMonths
+    );
 
     useEffect(() => {
         window.scrollTo({

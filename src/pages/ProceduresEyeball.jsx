@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+
+import { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import SlickModule from 'react-slick';
 
@@ -9,11 +10,26 @@ import 'slick-carousel/slick/slick-theme.css';
 
 import BookingForm from '../components/BookingForm';
 import Footer from '../components/Footer';
+import CouponButton from '../components/CouponButton';
+import CouponModal from '../components/CouponModal';
+import CouponListModal from '../components/CouponListModal';
 
 const Slider = SlickModule.default ?? SlickModule;
 
+const COUPONS = [
+    {
+        code: 'EYEBALL60',
+        discount: 60,
+        title: 'Eyeball Tattoo',
+        description: 'Promoción especial para tatuaje escleral.',
+    },
+];
+
 export default function ProceduresEyeball() {
     const location = useLocation();
+
+    const [showCouponList, setShowCouponList] = useState(false);
+    const [formCoupon, setFormCoupon] = useState('');
 
     useEffect(() => {
         window.scrollTo({
@@ -22,6 +38,19 @@ export default function ProceduresEyeball() {
             behavior: 'instant',
         });
     }, [location.pathname]);
+
+    const handleUseCoupon = (coupon) => {
+        setFormCoupon(coupon.code);
+
+        requestAnimationFrame(() => {
+            document
+                .getElementById('eyeball-booking')
+                ?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+        });
+    };
 
     const settings = {
         dots: true,
@@ -38,6 +67,12 @@ export default function ProceduresEyeball() {
 
     return (
         <main className="procedures-eyeball">
+            {/* Botón flotante para abrir los cupones */}
+            <CouponButton
+                count={COUPONS.length}
+                onClick={() => setShowCouponList(true)}
+            />
+
             <header className="procedures-eyeball__header">
                 <Link
                     to="/"
@@ -102,13 +137,36 @@ export default function ProceduresEyeball() {
                 </p>
             </section>
 
-            <section className="procedures-eyeball__booking">
-                <BookingForm />
+            {/* Formulario: recibe automáticamente el código seleccionado */}
+            <section
+                id="eyeball-booking"
+                className="procedures-eyeball__booking"
+            >
+                <BookingForm initialCoupon={formCoupon} />
             </section>
 
             <section className="procedures-eyeball__footer">
                 <Footer />
             </section>
+
+            {/* Modal promocional automático después de 5 segundos */}
+            <CouponModal
+                procedure="Eyeball Tattoo"
+                discount={60}
+                image="https://res.cloudinary.com/djir3xi7x/image/upload/v1792165270/WhatsApp_Image_2026-09-21_at_4.31.14_PM_hjaj6u.jpg"
+                code="EYEBALL60"
+                delay={5000}
+                storageKey="eyeballCouponSeen"
+                redirectTo={location.pathname}
+            />
+
+            {/* Modal con la lista de cupones */}
+            <CouponListModal
+                isOpen={showCouponList}
+                onClose={() => setShowCouponList(false)}
+                coupons={COUPONS}
+                onUseCoupon={handleUseCoupon}
+            />
         </main>
     );
 }

@@ -10,10 +10,23 @@ import 'slick-carousel/slick/slick-theme.css';
 import BookingForm from '../components/BookingForm';
 import Footer from '../components/Footer';
 
+import useProcedureCoupon from '../hooks/useProcedureCoupon';
+import { COUPONS } from '../data/coupons';
+
 const Slider = SlickModule.default ?? SlickModule;
 
 export default function ProceduresSubdermalImplant() {
     const location = useLocation();
+
+    const couponConfig = COUPONS.find(
+        (coupon) => coupon.code === 'IMPLANT60'
+    );
+
+    useProcedureCoupon(
+        location.pathname,
+        couponConfig?.code,
+        couponConfig?.validityMonths
+    );
 
     useEffect(() => {
         window.scrollTo({
@@ -106,7 +119,10 @@ export default function ProceduresSubdermalImplant() {
                 </p>
             </section>
 
-            <section className="procedures-subdermal-implant__booking">
+            <section
+                className="procedures-subdermal-implant__booking"
+                data-booking-form
+            >
                 <BookingForm />
             </section>
 
