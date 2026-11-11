@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import './styles/BookingForm.scss';
 import PriorityBookingModal from './PriorityBookingModal';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
-
 const BookingForm = () => {
     const navigate = useNavigate();
 
@@ -39,12 +37,6 @@ const BookingForm = () => {
         setSubmitError('');
 
         try {
-            if (!API_BASE_URL) {
-                throw new Error(
-                    'Falta configurar VITE_API_URL en Vercel.'
-                );
-            }
-
             const payload = {
                 name: formData.name.trim(),
                 phone: formData.phone.trim(),
@@ -53,7 +45,7 @@ const BookingForm = () => {
                 description: formData.description.trim(),
             };
 
-            const response = await fetch(`${API_BASE_URL}/api/bookings`, {
+            const response = await fetch('/api/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
