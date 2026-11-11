@@ -1,0 +1,287 @@
+.priority-checkout {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    min-height: 100vh;
+    padding: 100px 6vw 70px;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: #000;
+    color: #fff;
+    font-family: 'Almendra', serif;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    &::before {
+        inset: -20px 0 0;
+        background: #00000059 url('/Fondo.png') center top / cover no-repeat;
+        filter: blur(10.5px);
+    }
+
+    &::after { background: rgba(3, 3, 3, 0.404); }
+
+    &__header,
+    &__grid,
+    &__payment {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 1100px);
+        margin-inline: auto;
+    }
+
+    &__header {
+        margin-bottom: 48px;
+        text-align: center;
+
+        h1 {
+            margin: 0;
+            color: #fff;
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: clamp(3rem, 7vw, 6rem);
+            font-weight: 400;
+            line-height: 0.95;
+            letter-spacing: 0.02em;
+            opacity: 0;
+            filter: blur(20px);
+            animation: checkoutReveal 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        p {
+            max-width: 760px;
+            margin: 28px auto 0;
+            color: rgba(214, 214, 214, 0.85);
+            font-family: 'Almendra', serif;
+            font-size: 21px;
+            font-weight: 400;
+            letter-spacing: 0.08em;
+            line-height: 1.8;
+            text-wrap: balance;
+            opacity: 0;
+            animation: checkoutReveal 1000ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+        }
+    }
+
+    &__back {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: color 0.25s ease;
+
+        &:hover { color: #fff; }
+        &:focus-visible { outline: 1px solid #fff; outline-offset: 6px; }
+    }
+
+    &__eyebrow,
+    &__step {
+        display: block;
+        color: rgba(214, 214, 214, 0.75);
+        font-family: 'Almendra', serif;
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: 0.2em;
+        line-height: 1.8;
+        text-transform: uppercase;
+    }
+
+    &__eyebrow { margin-bottom: 20px; }
+
+    &__step { font-size: 11px; }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(270px, 0.8fr);
+        gap: 28px;
+        align-items: start;
+    }
+
+    &__panel,
+    &__summary,
+    &__payment {
+        border: 1px solid rgba(255, 255, 255, 0.32);
+        background: rgba(0, 0, 0, 0.58);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.38);
+        backdrop-filter: blur(8px);
+    }
+
+    &__panel,
+    &__summary,
+    &__payment { padding: clamp(22px, 4vw, 38px); }
+
+    h2 {
+        margin: 10px 0 24px;
+        color: #fff;
+        font-family: 'UnifrakturMaguntia', cursive;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 400;
+        line-height: 1.1;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 15px;
+        letter-spacing: 0.04em;
+    }
+
+    &__date {
+        width: 100%;
+        min-height: 52px;
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.52);
+        border-radius: 0;
+        box-sizing: border-box;
+        background: rgba(0, 0, 0, 0.72);
+        color: #fff;
+        color-scheme: dark;
+        font: inherit;
+        font-size: 15px;
+
+        &:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    }
+
+    small {
+        display: block;
+        margin-top: 10px;
+        color: rgba(214, 214, 214, 0.72);
+        font-size: 12px;
+        letter-spacing: 0.025em;
+        line-height: 1.7;
+    }
+
+    &__selected,
+    &__notice {
+        margin: 16px 0 0;
+        color: #fff;
+        font-size: 14px;
+        letter-spacing: 0.03em;
+    }
+
+    &__error {
+        margin: 16px 0 0;
+        color: #ffb5b5;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    &__continue,
+    &__pay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 56px;
+        margin-top: 26px;
+        padding: 14px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.72);
+        border-radius: 0;
+        background: rgba(0, 0, 0, 0.48);
+        color: #fff;
+        font-family: 'Almendra', serif;
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 0.14em;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 250ms ease, color 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+        animation: checkoutButtonGlow 2.2s ease-in-out infinite;
+
+        &:hover:not(:disabled) {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+            animation-play-state: paused;
+            box-shadow: 0 0 22px rgba(255, 255, 255, 0.3);
+        }
+
+        &:focus-visible { outline: 2px solid #fff; outline-offset: 5px; }
+        &:disabled { opacity: 0.48; cursor: not-allowed; animation: none; }
+    }
+
+    &__summary {
+        p {
+            margin: 0;
+            color: rgba(214, 214, 214, 0.82);
+            font-size: 15px;
+            letter-spacing: 0.04em;
+            line-height: 1.8;
+        }
+    }
+
+    &__total {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 16px;
+        margin: 28px 0 14px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 15px;
+        letter-spacing: 0.08em;
+
+        strong { color: #fff; font-size: 24px; font-weight: 400; letter-spacing: 0.03em; }
+    }
+
+    &__payment { margin-top: 28px; }
+    &__form { margin-top: 22px; }
+    &__secure { margin: 16px 0 0; color: rgba(214, 214, 214, 0.72); font-size: 12px; line-height: 1.7; text-align: center; }
+}
+
+@keyframes checkoutReveal {
+    from { opacity: 0; transform: translateY(22px); filter: blur(20px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes checkoutButtonGlow {
+    0%, 100% { box-shadow: 0 0 7px rgba(255, 255, 255, 0.14); }
+    50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.34); }
+}
+
+@media (max-width: 768px) {
+    .priority-checkout {
+        padding: 90px 5vw 55px;
+        &::before { filter: blur(8px); }
+        &__grid { grid-template-columns: 1fr; gap: 20px; }
+        &__header { margin-bottom: 38px; }
+        &__header p { font-size: 19px; line-height: 1.7; }
+        &__eyebrow { font-size: 12px; letter-spacing: 0.15em; }
+    }
+}
+
+@media (max-width: 480px) {
+    .priority-checkout {
+        padding: 70px 20px 40px;
+        &::before { filter: blur(5px); }
+        &__header { margin-bottom: 30px; }
+        &__header h1 { font-size: 2.8rem; line-height: 1; }
+        &__header p { margin-top: 22px; font-size: 15.5px; letter-spacing: 0.04em; line-height: 1.7; }
+        &__eyebrow { margin-bottom: 18px; font-size: 10px; letter-spacing: 0.12em; }
+        &__back { gap: 9px; margin-bottom: 20px; font-size: 0.65rem; letter-spacing: 0.12em; }
+        &__panel, &__summary, &__payment { padding: 22px 18px; }
+        &__continue, &__pay { font-size: 12px; letter-spacing: 0.1em; }
+        &__total strong { font-size: 21px; }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .priority-checkout {
+        &__header h1, &__header p { animation: none; opacity: 1; filter: none; transform: none; }
+        &__back, &__continue, &__pay { transition: none; }
+        &__continue, &__pay { animation: none; }
+    }
+}

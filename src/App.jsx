@@ -17,11 +17,13 @@ import CouponModal from './components/CouponModal';
 import CouponButton from './components/CouponButton';
 import CouponListModal from './components/CouponListModal';
 
+
 import ProceduresEyeball from './pages/ProceduresEyeball';
 import ProceduresScarification from './pages/ProceduresScarification';
 import ProceduresTongueSplit from './pages/ProceduresToungeSplit';
 import ProceduresSubdermalImplant from './pages/ProceduresSubdermalImplant';
 import ProceduresTattoo from './pages/ProceduresTattoo';
+import PriorityAppointmentCheckout from './pages/PriorityAppointmentCheckout';
 
 import { COUPONS } from './data/coupons';
 
@@ -30,6 +32,20 @@ const PROCEDURE_STORAGE_KEY = 'procedureCouponsAssigned';
 const EYEBALL_STORAGE_KEY = 'eyeballCouponAssignment';
 const COUPON_TO_USE_KEY = 'couponToUse';
 const COUPON_SEEN_PREFIX = 'couponSeen-';
+// Debe existir en el backend y validar disponibilidad/precio antes de crear el PaymentIntent.
+async function createPriorityPaymentIntent({ appointmentDate }) {
+    const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointmentDate }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.message || 'No fue posible iniciar el pago.');
+    }
+    return data;
+}
 
 // Lee JSON de forma segura.
 function readJSON(key, storage = localStorage) {
@@ -419,6 +435,11 @@ function AppLayout() {
                     path="/procedures-tattoo"
                     element={<ProceduresTattoo />}
                 />
+
+                <Route
+                    path="/priority-appointment-checkout"
+                    element={<PriorityAppointmentCheckout createPaymentIntent={createPriorityPaymentIntent} />}
+                />
             </Routes>
 
             {carouselFinished && (
@@ -471,3 +492,5 @@ function AppLayout() {
 export default function App() {
     return <AppLayout />;
 }
+
+
