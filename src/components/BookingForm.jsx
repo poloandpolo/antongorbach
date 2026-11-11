@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/BookingForm.scss';
 import PriorityBookingModal from './PriorityBookingModal';
@@ -18,6 +18,28 @@ const BookingForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState('');
     const [bookingId, setBookingId] = useState('');
+
+    useEffect(() => {
+        const handleApplyCoupon = event => {
+            const couponCode =
+                typeof event.detail === 'string'
+                    ? event.detail
+                    : event.detail?.code;
+
+            if (!couponCode) return;
+
+            setFormData(previous => ({
+                ...previous,
+                coupon: couponCode,
+            }));
+        };
+
+        window.addEventListener('apply-coupon', handleApplyCoupon);
+
+        return () => {
+            window.removeEventListener('apply-coupon', handleApplyCoupon);
+        };
+    }, []);
 
     const handleChange = event => {
         const { name, value } = event.target;
