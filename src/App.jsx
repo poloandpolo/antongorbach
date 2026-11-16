@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useCallback } from 'react';
 import {
     Routes,
@@ -17,7 +16,6 @@ import CouponModal from './components/CouponModal';
 import CouponButton from './components/CouponButton';
 import CouponListModal from './components/CouponListModal';
 
-
 import ProceduresEyeball from './pages/ProceduresEyeball';
 import ProceduresScarification from './pages/ProceduresScarification';
 import ProceduresTongueSplit from './pages/ProceduresToungeSplit';
@@ -31,23 +29,13 @@ const CAROUSEL_STORAGE_KEY = 'anton-carousel-seen';
 const PROCEDURE_STORAGE_KEY = 'procedureCouponsAssigned';
 const EYEBALL_STORAGE_KEY = 'eyeballCouponAssignment';
 const COUPON_TO_USE_KEY = 'couponToUse';
+const USED_COUPONS_STORAGE_KEY = 'usedCoupons';
 const COUPON_SEEN_PREFIX = 'couponSeen-';
-// Debe existir en el backend y validar disponibilidad/precio antes de crear el PaymentIntent.
-async function createPriorityPaymentIntent({ appointmentDate }) {
-    const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ appointmentDate }),
-    });
 
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-        throw new Error(data.message || 'No fue posible iniciar el pago.');
-    }
-    return data;
+function normalizeCouponCode(code) {
+    return String(code || '').trim().toUpperCase();
 }
 
-// Lee JSON de forma segura.
 function readJSON(key, storage = localStorage) {
     try {
         return JSON.parse(storage.getItem(key) || 'null');
@@ -56,7 +44,14 @@ function readJSON(key, storage = localStorage) {
     }
 }
 
-// Migra datos existentes de sessionStorage a localStorage.
+function getUsedCouponCodes() {
+    const codes = readJSON(USED_COUPONS_STORAGE_KEY, localStorage);
+
+    return Array.isArray(codes)
+        ? codes.map(normalizeCouponCode)
+        : [];
+}
+
 function migrateStorage(key) {
     const localValue = readJSON(key, localStorage);
 
@@ -74,20 +69,18 @@ function migrateStorage(key) {
     return null;
 }
 
-// Recupera una asignación de cupón, respetando su vencimiento.
 function getCouponInfo(assignment) {
     if (!assignment?.code) return null;
 
     const catalogCoupon = COUPONS.find(
-        coupon => coupon.code === assignment.code
+        coupon =>
+            normalizeCouponCode(coupon.code) ===
+            normalizeCouponCode(assignment.code)
     );
 
     if (!catalogCoupon) return null;
 
-    if (
-        assignment.expiresAt &&
-        assignment.expiresAt <= Date.now()
-    ) {
+    if (assignment.expiresAt && assignment.expiresAt <= Date.now()) {
         return null;
     }
 
@@ -99,7 +92,6 @@ function getCouponInfo(assignment) {
     };
 }
 
-// Asigna Eyeball una sola vez y persiste la asignación.
 function assignEyeballCoupon() {
     const catalogCoupon = COUPONS.find(
         coupon => coupon.code === 'EYEBALL60'
@@ -109,7 +101,6 @@ function assignEyeballCoupon() {
 
     let assignment = migrateStorage(EYEBALL_STORAGE_KEY);
 
-    // Si ya fue asignado, no se crea otra asignación.
     if (assignment) {
         return getCouponInfo(assignment);
     }
@@ -118,7 +109,8 @@ function assignEyeballCoupon() {
     const expiration = new Date(now);
 
     expiration.setMonth(
-        expiration.getMonth() + (catalogCoupon.validityMonths || 4)
+        expiration.getMonth() +
+            (catalogCoupon.validityMonths || 4)
     );
 
     assignment = {
@@ -135,7 +127,6 @@ function assignEyeballCoupon() {
     return getCouponInfo(assignment);
 }
 
-// Devuelve los cupones asignados sin duplicar códigos.
 function getAllAssignedCoupons() {
     const procedureAssignments =
         migrateStorage(PROCEDURE_STORAGE_KEY);
@@ -151,14 +142,17 @@ function getAllAssignedCoupons() {
     ];
 
     const seen = new Set();
+    const usedCodes = new Set(getUsedCouponCodes());
 
     return assignments
         .filter(assignment => {
-            if (!assignment?.code || seen.has(assignment.code)) {
+            const code = normalizeCouponCode(assignment?.code);
+
+            if (!code || seen.has(code) || usedCodes.has(code)) {
                 return false;
             }
 
-            seen.add(assignment.code);
+            seen.add(code);
             return true;
         })
         .map(getCouponInfo)
@@ -195,8 +189,13 @@ function HomePage({ onCarouselFinish }) {
 
     useEffect(() => {
         const handleApplyCoupon = event => {
-            if (event.detail) {
-                setFormCoupon(event.detail);
+            const code =
+                typeof event.detail === 'string'
+                    ? event.detail
+                    : event.detail?.code;
+
+            if (code) {
+                setFormCoupon(code);
             }
         };
 
@@ -213,10 +212,12 @@ function HomePage({ onCarouselFinish }) {
     useEffect(() => {
         if (location.state?.scrollToProcedures && showMain) {
             requestAnimationFrame(() => {
-                document.getElementById('app_procedures')?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                });
+                document
+                    .getElementById('app_procedures')
+                    ?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                    });
             });
         }
     }, [location, showMain]);
@@ -271,11 +272,15 @@ function HomePage({ onCarouselFinish }) {
 }
 
 function AppLayout() {
+    const location = useLocation();
+    const isCheckout =
+        location.pathname === '/priority-appointment-checkout';
+
     const [showCouponList, setShowCouponList] = useState(false);
     const [assignedCoupons, setAssignedCoupons] = useState([]);
-
     const [eyeballCoupon, setEyeballCoupon] = useState(null);
-    const [activeProcedureCoupon, setActiveProcedureCoupon] = useState(null);
+    const [activeProcedureCoupon, setActiveProcedureCoupon] =
+        useState(null);
 
     const [carouselFinished, setCarouselFinished] = useState(
         () => localStorage.getItem(CAROUSEL_STORAGE_KEY) === 'true'
@@ -310,7 +315,6 @@ function AppLayout() {
 
             if (coupon.code === 'EYEBALL60') {
                 setEyeballCoupon(previous => {
-                    // Evita reiniciar el modal si la asignación no cambió.
                     if (
                         previous?.assignedAt === coupon.assignedAt &&
                         previous?.code === coupon.code
@@ -325,10 +329,47 @@ function AppLayout() {
             }
         };
 
+        // BookingForm emite este evento solo tras guardar correctamente
+        // la solicitud en el backend.
+        const handleCouponUsed = event => {
+            const code =
+                typeof event.detail === 'string'
+                    ? event.detail
+                    : event.detail?.code;
+
+            const normalizedCode = normalizeCouponCode(code);
+
+            if (!normalizedCode) return;
+
+            const usedCodes = new Set(getUsedCouponCodes());
+            usedCodes.add(normalizedCode);
+
+            try {
+                localStorage.setItem(
+                    USED_COUPONS_STORAGE_KEY,
+                    JSON.stringify([...usedCodes])
+                );
+            } catch (error) {
+                console.error(
+                    'No se pudo guardar el cupón utilizado:',
+                    error
+                );
+            }
+
+            setAssignedCoupons(previous =>
+                previous.filter(
+                    coupon =>
+                        normalizeCouponCode(coupon.code) !==
+                        normalizedCode
+                )
+            );
+        };
+
         const handleStorage = event => {
             if (
                 event.key === PROCEDURE_STORAGE_KEY ||
-                event.key === EYEBALL_STORAGE_KEY
+                event.key === EYEBALL_STORAGE_KEY ||
+                event.key === USED_COUPONS_STORAGE_KEY
             ) {
                 refreshCoupons();
 
@@ -345,7 +386,7 @@ function AppLayout() {
             'coupons-updated',
             handleCouponsUpdated
         );
-
+        window.addEventListener('coupon-used', handleCouponUsed);
         window.addEventListener('storage', handleStorage);
 
         const handleVisibility = () => {
@@ -364,9 +405,8 @@ function AppLayout() {
                 'coupons-updated',
                 handleCouponsUpdated
             );
-
+            window.removeEventListener('coupon-used', handleCouponUsed);
             window.removeEventListener('storage', handleStorage);
-
             document.removeEventListener(
                 'visibilitychange',
                 handleVisibility
@@ -374,23 +414,14 @@ function AppLayout() {
         };
     }, [refreshCoupons]);
 
-    // Guardar el cupón y notificar al formulario sin cambiar de ruta.
     const handleUseCoupon = coupon => {
         if (!coupon?.code) return;
 
-        localStorage.setItem(COUPON_TO_USE_KEY, coupon.code);
-        sessionStorage.setItem(COUPON_TO_USE_KEY, coupon.code);
-
-        window.dispatchEvent(
-            new CustomEvent('apply-coupon', {
-                detail: coupon.code,
-            })
-        );
-
+        // CouponListModal ya guarda y aplica el código.
+        // Aquí solo cerramos la lista; aún no se marca como usado.
         setShowCouponList(false);
     };
 
-    // Cada modal usa una clave de almacenamiento persistente.
     const eyeballStorageKey = eyeballCoupon
         ? `${COUPON_SEEN_PREFIX}${eyeballCoupon.code}-${eyeballCoupon.assignedAt}`
         : null;
@@ -438,11 +469,11 @@ function AppLayout() {
 
                 <Route
                     path="/priority-appointment-checkout"
-                    element={<PriorityAppointmentCheckout createPaymentIntent={createPriorityPaymentIntent} />}
+                    element={<PriorityAppointmentCheckout />}
                 />
             </Routes>
 
-            {carouselFinished && (
+            {carouselFinished && !isCheckout && (
                 <CouponButton
                     count={assignedCoupons.length}
                     onClick={() => setShowCouponList(true)}
@@ -450,13 +481,12 @@ function AppLayout() {
             )}
 
             <CouponListModal
-                isOpen={showCouponList}
+                isOpen={showCouponList && !isCheckout}
                 onClose={() => setShowCouponList(false)}
                 coupons={assignedCoupons}
                 onUseCoupon={handleUseCoupon}
             />
 
-            {/* Modal de Eyeball: independiente de los cupones de procedimientos. */}
             {carouselFinished && eyeballCoupon && (
                 <CouponModal
                     key={`eyeball-${eyeballCoupon.assignedAt}`}
@@ -470,7 +500,6 @@ function AppLayout() {
                 />
             )}
 
-            {/* Modal independiente para el cupón de procedimiento. */}
             {carouselFinished &&
                 activeProcedureCoupon &&
                 activeProcedureCoupon.code !== 'EYEBALL60' && (
@@ -492,5 +521,3 @@ function AppLayout() {
 export default function App() {
     return <AppLayout />;
 }
-
-

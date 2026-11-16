@@ -37,7 +37,10 @@ const BookingForm = () => {
         window.addEventListener('apply-coupon', handleApplyCoupon);
 
         return () => {
-            window.removeEventListener('apply-coupon', handleApplyCoupon);
+            window.removeEventListener(
+                'apply-coupon',
+                handleApplyCoupon
+            );
         };
     }, []);
 
@@ -90,6 +93,33 @@ const BookingForm = () => {
             if (!result.bookingId) {
                 throw new Error(
                     'El servidor no devolvió el ID de la solicitud.'
+                );
+            }
+
+            // El cupón solo se marca como usado después de que el servidor
+            // confirma que la solicitud fue guardada.
+            if (payload.coupon) {
+                window.dispatchEvent(
+                    new CustomEvent('coupon-used', {
+                        detail: payload.coupon,
+                    })
+                );
+            }
+
+            try {
+                sessionStorage.setItem(
+                    'priorityBookingContact',
+                    JSON.stringify({
+                        bookingId: result.bookingId,
+                        name: payload.name,
+                        phone: payload.phone,
+                        email: payload.email,
+                    })
+                );
+            } catch (storageError) {
+                console.warn(
+                    'No se pudieron guardar temporalmente los datos de contacto.',
+                    storageError
                 );
             }
 

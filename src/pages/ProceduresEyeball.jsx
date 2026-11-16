@@ -117,24 +117,24 @@ export default function ProceduresEyeball() {
 
                 <h1>Eyeball Tattoo</h1>
 
+
                 <p>
-                    El tatuaje escleral es una forma especializada de modificación
-                    corporal que busca alterar la apariencia de la esclerótica,
-                    la parte blanca del ojo, mediante la introducción de pigmento.
+                    El tatuaje escleral representa una de las expresiones más singulares y definitivas de la modificación corporal contemporánea. Mediante la introducción directa de pigmento en la esclerótica —la estructura blanca que recubre el globo ocular—, busca transformar de raíz la apariencia de la mirada. Una intervención extraordinaria que exige comprender a fondo su absoluta complejidad y sus consecuencias irreversibles.
                 </p>
 
                 <p>
-                    Es una intervención de alto riesgo que puede ocasionar
-                    complicaciones graves y pérdida permanente de visión.
-                    Es fundamental conocer los riesgos y recibir información
-                    especializada antes de considerar cualquier procedimiento.
+                    A diferencia de cualquier otra modificación corporal, intervenir el ojo conlleva riesgos críticos: desde infecciones severas y alteraciones anatómicas hasta la pérdida permanente de la visión. No existen garantías estéticas ni margen para el error, incluso bajo la supervisión de manos experimentadas.
                 </p>
 
                 <p>
-                    Anton Gorbach cuenta con experiencia en modificación corporal.
-                    Para solicitar información sobre este procedimiento, utiliza
-                    el siguiente formulario de contacto.
+                    Es precisamente por este nivel de riesgo que la experiencia técnica y el criterio de <strong>Anton Gorbach</strong> resultan indispensables. Su enfoque se basa en la transparencia radical, la evaluación rigurosa de cada caso y la comprensión estricta de las limitaciones de la disciplina.
                 </p>
+
+
+                <p>
+                    <strong>Si estás considerando dar este paso con la máxima responsabilidad y rigor técnico, completa el formulario a continuación para asegurar tu revisión.</strong>
+                </p>
+
             </section>
 
             {/* Formulario: recibe automáticamente el código seleccionado */}

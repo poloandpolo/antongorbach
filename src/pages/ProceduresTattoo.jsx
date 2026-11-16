@@ -97,25 +97,15 @@ export default function ProceduresTattoo() {
                 <h1>Tattoo</h1>
 
                 <p>
-                    El tatuaje es una forma de expresión artística que transforma
-                    la piel en un espacio para plasmar ideas, símbolos e historias
-                    personales. Cada diseño puede desarrollarse de manera
-                    individual para reflejar la identidad y visión de quien lo lleva.
+                    El tatuaje trasciende lo meramente decorativo para convertirse en una marca permanente de identidad y carácter. A diferencia de las tendencias pasajeras, una pieza bien concebida transforma la piel en un soporte arquitectónico para plasmar símbolos e historias personales con fuerza visual y coherencia estética a lo largo del tiempo.
                 </p>
 
                 <p>
-                    Con más de diez años de experiencia, Anton Gorbach trabaja
-                    estilos como blackwork, black and grey, blackout y dark
-                    ornamental, creando composiciones que buscan equilibrio,
-                    carácter y personalidad.
+                    Con más de diez años de trayectoria, Anton Gorbach especializa su trabajo en estilos de alto contraste y solidez técnica como el <i>blackwork</i>, <i>black and grey</i>, <i>blackout</i> y <i>dark ornamental</i>. Su enfoque prioriza el equilibrio anatómico y la durabilidad del pigmento, desarrollando composiciones diseñadas específicamente para fluir con la musculatura y estructura natural de cada cuerpo.
                 </p>
 
                 <p>
-                    Cada proyecto se plantea de forma personalizada, considerando
-                    el diseño, la ubicación y las características de la piel.
-                    Los procedimientos deben realizarse con medidas apropiadas
-                    de higiene y seguridad. Para consultar sobre un diseño o
-                    solicitar información, utiliza el siguiente formulario.
+                    Cada proyecto se concibe de forma individual y bajo estrictos protocolos de higiene y seguridad, evaluando a fondo la viabilidad del diseño, la zona anatómica y las características de tu piel antes de iniciar. Si tienes una idea en mente y buscas desarrollar una pieza sólida y personalizada, completa el formulario a continuación para iniciar la valoración de tu proyecto.
                 </p>
             </section>
 

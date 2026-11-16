@@ -77,7 +77,7 @@ const PriorityBookingModal = ({ isOpen, onClose, onContinue }) => {
 
                     <div className="priority-modal__offer">
                         <span className="priority-modal__offer-label">ANTICIPO DE PRIORIDAD</span>
-                        <strong className="priority-modal__price">$70</strong>
+                        <strong className="priority-modal__price">$60</strong>
                         <span className="priority-modal__currency">USD</span>
                     </div>
 

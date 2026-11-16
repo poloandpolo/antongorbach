@@ -96,26 +96,19 @@ export default function ProceduresTongueSplit() {
 
                 <h1>Tongue Split</h1>
 
+
                 <p>
-                    La bifurcación lingual, conocida como tongue split, es una
-                    modificación corporal que consiste en dividir parcialmente
-                    la lengua para crear una apariencia bifurcada.
+                    La bifurcación lingual, conocida internacionalmente como <i>tongue split</i>, representa una de las intervenciones más definitivas y complejas sobre la anatomía humana. Mediante la separación longitudinal de la porción anterior de la lengua, se transforma de raíz la configuración de un órgano clave, fusionando una estética radical con un desafío anatómico de alta precisión.
                 </p>
 
                 <p>
-                    Es un procedimiento invasivo que puede ocasionar hemorragias,
-                    infecciones, lesiones nerviosas, alteraciones de la movilidad
-                    y otras complicaciones graves. La anatomía, la recuperación
-                    y los resultados varían de una persona a otra.
+                    Al intervenir un tejido altamente vascularizado e inervado, los riesgos inherentes no admiten margen para la improvisación: desde hemorragias severas e infecciones hasta daño nervioso, alteraciones en la sensibilidad, problemas de movilidad o dificultades permanentes en el habla y la deglución. Ningún procedimiento de esta naturaleza está exento de complicaciones imprevistas ni puede garantizar un resultado funcional o estético absoluto.
                 </p>
 
                 <p>
-                    Antes de considerar esta modificación, es fundamental
-                    conocer sus riesgos, recibir información individualizada
-                    y consultar con profesionales médicos cualificados.
-                    Para solicitar información sobre este procedimiento,
-                    utiliza el siguiente formulario.
+                    Bajo la experiencia y el criterio técnico de Anton Gorbach, este tipo de procedimientos se abordan desde el análisis riguroso de la viabilidad anatómica y la máxima seguridad. Si estás considerando dar este paso y necesitas una evaluación profesional, honesta y detallada sobre sus riesgos, limitaciones técnicas y cuidados, te invitamos a completar el formulario a continuación para iniciar el proceso de revisión de tu caso.
                 </p>
+
             </section>
 
             <section className="procedures-tongue-split__booking">

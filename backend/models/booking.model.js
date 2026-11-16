@@ -8,10 +8,13 @@ const backendDir = path.resolve(
     '..'
 );
 
-const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const credentialsPath =
+    process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 if (!credentialsPath) {
-    throw new Error('Falta la variable GOOGLE_APPLICATION_CREDENTIALS.');
+    throw new Error(
+        'Falta GOOGLE_APPLICATION_CREDENTIALS en el entorno del backend.'
+    );
 }
 
 const credentialsFile = path.isAbsolute(credentialsPath)
@@ -19,40 +22,53 @@ const credentialsFile = path.isAbsolute(credentialsPath)
     : path.resolve(backendDir, credentialsPath);
 
 if (!fs.existsSync(credentialsFile)) {
-    throw new Error(`No se encontró el archivo de credenciales: ${credentialsFile}`);
+    throw new Error(
+        `No se encontró el archivo de credenciales: ${credentialsFile}`
+    );
 }
 
 const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
 if (!spreadsheetId) {
-    throw new Error('Falta la variable GOOGLE_SHEET_ID.');
+    throw new Error(
+        'Falta la variable GOOGLE_SHEET_ID en el entorno del backend.'
+    );
 }
+
+const spreadsheetRange =
+    process.env.GOOGLE_SHEET_RANGE || 'Solicitudes!A:H';
 
 const auth = new google.auth.GoogleAuth({
     keyFile: credentialsFile,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    scopes: [
+        'https://www.googleapis.com/auth/spreadsheets',
+    ],
+});
+
+const sheets = google.sheets({
+    version: 'v4',
+    auth,
 });
 
 export async function saveBooking(booking) {
-    const sheets = google.sheets({
-        version: 'v4',
-        auth,
-    });
+    if (!booking || typeof booking !== 'object') {
+        throw new Error('Los datos de la solicitud no son válidos.');
+    }
 
     await sheets.spreadsheets.values.append({
         spreadsheetId,
-        range: process.env.GOOGLE_SHEET_RANGE || 'Solicitudes!A:H',
+        range: spreadsheetRange,
         valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
         requestBody: {
             values: [[
                 new Date().toISOString(),
-                booking.id,
-                booking.name,
-                booking.phone,
-                booking.email,
+                booking.id || '',
+                booking.name || '',
+                booking.phone || '',
+                booking.email || '',
                 booking.coupon || '',
-                booking.description,
+                booking.description || '',
                 'Solicitud recibida',
             ]],
         },

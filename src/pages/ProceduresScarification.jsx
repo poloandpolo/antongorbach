@@ -129,26 +129,19 @@ export default function ProceduresScarification() {
 
                 <h1>Scarification</h1>
 
+
                 <p>
-                    La escarificación es una forma de modificación corporal
-                    artística que consiste en crear diseños permanentes en la
-                    piel mediante lesiones controladas que, durante el proceso
-                    de cicatrización, forman patrones y texturas.
+                    A través de incisiones y lesiones cuidadosamente diseñadas, la escarificación crea composiciones orgánicas que evolucionan durante la cicatrización, dando lugar a relieves, contrastes y texturas irrepetibles. Cada pieza constituye una transformación permanente y radical cuya apariencia final no depende solo del trazo, sino de la respuesta biológica única de tu cuerpo.
                 </p>
 
                 <p>
-                    Es un procedimiento invasivo que puede provocar infecciones,
-                    cicatrices impredecibles, alteraciones de la sensibilidad
-                    y otras complicaciones. La cicatrización varía según cada
-                    persona y el resultado final no puede garantizarse.
+                    Por su naturaleza invasiva, existen variables críticas que no admiten improvisación: infecciones, cicatrización hipertrófica o queloide, alteraciones de la sensibilidad, cambios en la pigmentación y resultados estéticos impredecibles. Incluso bajo protocolos estrictos de higiene y cuidados posteriores, la respuesta del tejido nunca es 100% controlable ni se puede garantizar un acabado idéntico al boceto.
                 </p>
 
                 <p>
-                    Cada diseño requiere una valoración individual, información
-                    clara sobre los riesgos y atención estricta a las medidas
-                    de higiene y seguridad. Para solicitar información sobre
-                    este procedimiento, utiliza el siguiente formulario.
+                    En el trabajo de Anton Gorbach, cada proyecto se aborda desde el rigor técnico, el diseño anatómico personalizado y una evaluación honesta de lo que tu piel puede lograr. Si buscas explorar la escarificación con total claridad sobre sus técnicas, cuidados y riesgos reales, completa el formulario a continuación.
                 </p>
+
             </section>
 
             <section

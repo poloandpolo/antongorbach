@@ -1,5 +1,7 @@
 import express from 'express';
 import bookingsRoutes from './routes/booking.routes.js';
+import appointmentsRoutes from './routes/appointments.routes.js';
+import paymentsRoutes from './routes/payments.routes.js';
 
 const app = express();
 
@@ -10,6 +12,8 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api/bookings', bookingsRoutes);
+app.use('/api/appointments', appointmentsRoutes);
+app.use('/api/payments', paymentsRoutes);
 
 app.use((_req, res) => {
     res.status(404).json({ message: 'Ruta no encontrada.' });
@@ -18,7 +22,9 @@ app.use((_req, res) => {
 app.use((error, _req, res, _next) => {
     console.error(error);
 
-    res.status(500).json({
+    const status = error.status || 500;
+
+    res.status(status).json({
         message:
             process.env.NODE_ENV === 'production'
                 ? 'Error interno del servidor.'

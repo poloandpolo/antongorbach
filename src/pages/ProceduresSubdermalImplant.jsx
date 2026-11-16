@@ -96,26 +96,15 @@ export default function ProceduresSubdermalImplant() {
                 <h1>Subdermal Implant</h1>
 
                 <p>
-                    Los implantes subdérmicos son una forma de modificación
-                    corporal en la que se coloca un implante debajo de la piel
-                    para crear un relieve o una forma determinada en la superficie
-                    del cuerpo.
+                    Los implantes subdérmicos representan una intervención de modificación corporal diseñada para alterar de forma permanente la topografía de la piel, colocando piezas de diseño anatómico bajo los tejidos para generar volúmenes y relieves estructurados. Una práctica que exige un dominio absoluto tanto de la estética visual como de la biomecánica corporal.
                 </p>
 
                 <p>
-                    Este procedimiento puede implicar riesgos como infección,
-                    sangrado, cicatrización anómala, rechazo o desplazamiento del
-                    implante y daño a estructuras cercanas. Los riesgos dependen
-                    de la zona, el material utilizado y las características
-                    individuales de cada persona.
+                    Al alterar la integridad de los tejidos, este procedimiento conlleva riesgos inevitables que no deben tomarse a la ligera: infecciones, sangrado, cicatrización anómala, rechazo o desplazamiento del implante y posibles daños a estructuras vasculares o nerviosas cercanas. La viabilidad del resultado depende críticamente de la calidad de los materiales, la zona elegida y la respuesta biológica individual.
                 </p>
 
                 <p>
-                    Antes de considerar esta modificación, es importante conocer
-                    sus posibles complicaciones y recibir una valoración
-                    individualizada de un profesional sanitario cualificado.
-                    Para solicitar información sobre este procedimiento,
-                    utiliza el siguiente formulario.
+                    Bajo la experiencia y el rigor técnico de Anton Gorbach, cada implante se aborda desde una perspectiva de seguridad anatómica y diseño personalizado. Si estás evaluando este tipo de modificación y requieres una valoración honesta y profesional sobre sus riesgos, materiales y viabilidad en tu anatomía, te invitamos a completar el formulario a continuación para iniciar el proceso de revisión.
                 </p>
             </section>
 
