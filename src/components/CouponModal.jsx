@@ -1,6 +1,4 @@
-
 import { useEffect, useState } from 'react';
-
 import './styles/CouponModal.scss';
 
 const COUPON_TO_USE_KEY = 'couponToUse';
@@ -18,26 +16,17 @@ const CouponModal = ({
 }) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    // Mostrar el cupón una sola vez, incluso después de cerrar el navegador.
     useEffect(() => {
-        if (
-            !procedure ||
-            discount == null ||
-            !code ||
-            !storageKey
-        ) {
-            return;
+        if (!procedure || discount == null || !code || !storageKey) {
+            return undefined;
         }
 
         if (localStorage.getItem(storageKey)) {
-            return;
+            return undefined;
         }
 
         const timer = window.setTimeout(() => {
-            // Comprobar nuevamente antes de mostrarlo.
-            if (localStorage.getItem(storageKey)) {
-                return;
-            }
+            if (localStorage.getItem(storageKey)) return;
 
             localStorage.setItem(storageKey, 'true');
             setIsOpen(true);
@@ -46,9 +35,8 @@ const CouponModal = ({
         return () => window.clearTimeout(timer);
     }, [procedure, discount, code, delay, storageKey]);
 
-    // Bloquear el scroll de fondo mientras el modal está abierto.
     useEffect(() => {
-        if (!isOpen) return;
+        if (!isOpen) return undefined;
 
         const previousOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
@@ -58,9 +46,8 @@ const CouponModal = ({
         };
     }, [isOpen]);
 
-    // Cerrar el modal con Escape.
     useEffect(() => {
-        if (!isOpen) return;
+        if (!isOpen) return undefined;
 
         const handleKeyDown = event => {
             if (event.key === 'Escape') {
@@ -91,7 +78,6 @@ const CouponModal = ({
 
         if (validityMonths) {
             const date = new Date();
-
             date.setMonth(date.getMonth() + validityMonths);
 
             return date.toLocaleDateString('es-MX', {
@@ -107,14 +93,12 @@ const CouponModal = ({
     const expirationDate = getExpirationDate();
 
     const findBookingForm = () => {
-        // 1. Priorizar un formulario marcado explícitamente.
         const markedForm = document.querySelector(
             '[data-booking-form]'
         );
 
         if (markedForm) return markedForm;
 
-        // 2. Buscar en el contenido de la página.
         const pageContent =
             document.querySelector('main') ||
             document.querySelector('.app__main') ||
@@ -126,7 +110,6 @@ const CouponModal = ({
             pageContent.querySelectorAll('form')
         );
 
-        // 3. Buscar formularios relacionados con citas.
         const bookingForm = forms.find(form => {
             const text = [
                 form.innerText,
@@ -146,8 +129,6 @@ const CouponModal = ({
         });
 
         if (bookingForm) return bookingForm;
-
-        // 4. Usar el único formulario disponible, si lo hay.
         if (forms.length === 1) return forms[0];
 
         return null;
@@ -158,40 +139,38 @@ const CouponModal = ({
 
         const bookingForm = findBookingForm();
 
-        if (!bookingForm) {
-            console.warn(
-                'No se encontró un formulario de cita en esta página. ' +
-                'Agrega data-booking-form al formulario correspondiente.'
+        // Guardar el código para que siga disponible al volver a la página.
+        try {
+            localStorage.setItem(COUPON_TO_USE_KEY, code);
+            sessionStorage.setItem(COUPON_TO_USE_KEY, code);
+        } catch (error) {
+            console.error(
+                'No se pudo guardar el cupón seleccionado:',
+                error
             );
-            return;
         }
 
-        // Persistir el código para que sobreviva a una recarga.
-        localStorage.setItem(COUPON_TO_USE_KEY, code);
-        sessionStorage.setItem(COUPON_TO_USE_KEY, code);
-
-        // Notificar a los formularios que escuchan este evento.
+        // Aplicarlo al formulario si está montado.
         window.dispatchEvent(
             new CustomEvent('apply-coupon', {
                 detail: code,
             })
         );
 
-        // Cerrar sin cambiar de ruta.
         setIsOpen(false);
         onClose?.();
 
-        // Desplazarse al formulario de la página actual.
-        window.setTimeout(() => {
-            const currentForm = findBookingForm();
-            const target = currentForm || bookingForm;
+        // Si no hay formulario en esta página, el código queda guardado
+        // y se podrá recuperar al volver a la página principal.
+        if (!bookingForm) return;
 
-            if (document.contains(target)) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                });
-            }
+        window.setTimeout(() => {
+            if (!document.contains(bookingForm)) return;
+
+            bookingForm.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+            });
         }, 150);
     };
 
@@ -226,6 +205,16 @@ const CouponModal = ({
 
                 <div className="coupon-modal__overlay" />
 
+                <button
+                    type="button"
+                    className="coupon-modal__close"
+                    onClick={handleGetDiscount}
+                    aria-label="Cerrar y obtener descuento"
+                    title="Cerrar y obtener descuento"
+                >
+                    ×
+                </button>
+
                 <div className="coupon-modal__inner">
                     <p className="coupon-modal__brand">
                         ANTON GORBACH
@@ -235,9 +224,7 @@ const CouponModal = ({
                         BODY MODIFICATION
                     </span>
 
-                    <div className="coupon-modal__divider">
-                        ✦
-                    </div>
+                    <div className="coupon-modal__divider">✦</div>
 
                     <h2
                         className="coupon-modal__title"
@@ -251,7 +238,8 @@ const CouponModal = ({
                     </h2>
 
                     <p className="coupon-modal__description">
-                        Una modificación extraordinaria. Una expresión única.
+                        Una modificación extraordinaria. Una expresión
+                        única.
                     </p>
 
                     <div className="coupon-modal__code">
@@ -276,7 +264,8 @@ const CouponModal = ({
                     </button>
 
                     <p className="coupon-modal__footnote">
-                        Tu código se aplicará al formulario de consulta de esta página.
+                        Tu código se aplicará al formulario de consulta
+                        de esta página.
                     </p>
                 </div>
             </div>

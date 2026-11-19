@@ -39,11 +39,25 @@ function isValidText(value, maxLength = 200) {
     );
 }
 
-// GET /api/payments/priority-price
-// El frontend usa esta cotización para mostrar el precio convertido.
+function getOptionalText(value, maxLength) {
+    if (value === undefined || value === null || value === '') {
+        return '';
+    }
+
+    if (typeof value !== 'string' || value.trim().length > maxLength) {
+        return null;
+    }
+
+    return value.trim();
+}
+
+// GET /api/payments/priority-price?amountUsd=85.50
 export async function getPriorityPrice(req, res, next) {
     try {
-        const quote = await getPriorityPriceQuote();
+        const quote = await getPriorityPriceQuote(
+            req.query.amountUsd
+        );
+
         return res.json(quote);
     } catch (error) {
         return next(error);
@@ -56,6 +70,10 @@ export async function createPaymentIntent(req, res, next) {
         appointmentDate,
         appointmentTime,
         bookingId,
+        name,
+        phone,
+        email,
+        amountUsd,
     } = req.body || {};
 
     if (
@@ -67,9 +85,27 @@ export async function createPaymentIntent(req, res, next) {
         });
     }
 
-    if (!isValidText(bookingId, 200)) {
+    if (!isValidText(name, 200)) {
         return res.status(400).json({
-            message: 'Falta el ID de la solicitud.',
+            message: 'Falta un nombre válido para el pago.',
+        });
+    }
+
+    const normalizedBookingId =
+        typeof bookingId === 'string' ? bookingId.trim() : '';
+
+    if (bookingId != null && typeof bookingId !== 'string') {
+        return res.status(400).json({
+            message: 'El ID de la solicitud no es válido.',
+        });
+    }
+
+    const normalizedPhone = getOptionalText(phone, 50);
+    const normalizedEmail = getOptionalText(email, 200);
+
+    if (normalizedPhone === null || normalizedEmail === null) {
+        return res.status(400).json({
+            message: 'El teléfono o correo no son válidos.',
         });
     }
 
@@ -86,8 +122,9 @@ export async function createPaymentIntent(req, res, next) {
             });
         }
 
-        // El importe se calcula en el backend, nunca se recibe del navegador.
-        const quote = await getPriorityPriceQuote();
+        // El backend calcula el equivalente en MXN.
+        // Si no llega amountUsd, el modelo usa el importe predeterminado.
+        const quote = await getPriorityPriceQuote(amountUsd);
 
         if (
             !Number.isInteger(quote.amountMinor) ||
@@ -100,21 +137,29 @@ export async function createPaymentIntent(req, res, next) {
             );
         }
 
+        const metadata = {
+            customerName: name.trim(),
+            customerPhone: normalizedPhone,
+            customerEmail: normalizedEmail,
+            appointmentDate,
+            appointmentTime,
+            usdAmount: Number(quote.usdAmount).toFixed(2),
+            exchangeRate: String(quote.exchangeRate),
+            exchangeRateDate: String(quote.rateDate || ''),
+            mxnAmount: Number(quote.amountMxn).toFixed(2),
+        };
+
+        if (normalizedBookingId) {
+            metadata.bookingId = normalizedBookingId;
+        }
+
         const paymentIntent = await stripe.paymentIntents.create({
             amount: quote.amountMinor,
             currency: quote.currency,
             automatic_payment_methods: {
                 enabled: true,
             },
-            metadata: {
-                bookingId: bookingId.trim(),
-                appointmentDate,
-                appointmentTime,
-                usdAmount: Number(quote.usdAmount).toFixed(2),
-                exchangeRate: String(quote.exchangeRate),
-                exchangeRateDate: String(quote.rateDate),
-                mxnAmount: Number(quote.amountMxn).toFixed(2),
-            },
+            metadata,
         });
 
         return res.status(201).json({
@@ -133,13 +178,7 @@ export async function createPaymentIntent(req, res, next) {
 
 // POST /api/payments/confirm-appointment
 export async function confirmAppointmentPayment(req, res, next) {
-    const {
-        paymentIntentId,
-        bookingId,
-        name,
-        phone,
-        email = '',
-    } = req.body || {};
+    const { paymentIntentId } = req.body || {};
 
     if (
         typeof paymentIntentId !== 'string' ||
@@ -147,18 +186,6 @@ export async function confirmAppointmentPayment(req, res, next) {
     ) {
         return res.status(400).json({
             message: 'El ID del pago no es válido.',
-        });
-    }
-
-    if (
-        !isValidText(bookingId, 200) ||
-        !isValidText(name, 200) ||
-        !isValidText(phone, 50) ||
-        typeof email !== 'string' ||
-        email.length > 200
-    ) {
-        return res.status(400).json({
-            message: 'Faltan datos de contacto válidos para la cita.',
         });
     }
 
@@ -173,42 +200,38 @@ export async function confirmAppointmentPayment(req, res, next) {
         }
 
         const metadata = paymentIntent.metadata || {};
-        const {
-            bookingId: paymentBookingId,
-            appointmentDate,
-            appointmentTime,
-            appointmentEventId,
-        } = metadata;
+
+        const appointmentDate = metadata.appointmentDate;
+        const appointmentTime = metadata.appointmentTime;
+        const bookingId = metadata.bookingId || '';
+        const name = metadata.customerName || '';
+        const phone = metadata.customerPhone || '';
+        const email = metadata.customerEmail || '';
 
         if (
             !isValidDate(appointmentDate) ||
-            !isValidTime(appointmentTime)
+            !isValidTime(appointmentTime) ||
+            !isValidText(name, 200)
         ) {
             return res.status(400).json({
                 message:
-                    'El pago no contiene una fecha y horario válidos.',
+                    'El pago no contiene un nombre, fecha y horario válidos.',
             });
         }
 
-        if (paymentBookingId !== bookingId.trim()) {
-            return res.status(400).json({
-                message:
-                    'La solicitud no coincide con la información del pago.',
-            });
-        }
+        // Si no hay bookingId, usa el ID de Stripe como referencia del evento,
+        // para que un reintento no cree una segunda cita.
+        const eventReference = bookingId || paymentIntentId;
+        let eventId = metadata.appointmentEventId;
 
-        let eventId = appointmentEventId;
-
-        // Si todavía no existe evento, agenda la cita y guarda su ID
-        // en Stripe para que un reintento no cree otro evento.
         if (!eventId) {
             const event = await createAppointmentEvent({
                 date: appointmentDate,
                 startTime: appointmentTime,
-                bookingId: bookingId.trim(),
-                name: name.trim(),
-                phone: phone.trim(),
-                email: email.trim(),
+                bookingId: eventReference,
+                name,
+                phone,
+                email,
             });
 
             eventId = event.id;
@@ -223,10 +246,10 @@ export async function confirmAppointmentPayment(req, res, next) {
 
         await savePriorityAppointment({
             paymentIntentId,
-            bookingId: bookingId.trim(),
-            name: name.trim(),
-            phone: phone.trim(),
-            email: email.trim(),
+            bookingId,
+            name,
+            phone,
+            email,
             appointmentDate,
             appointmentTime,
             eventId,

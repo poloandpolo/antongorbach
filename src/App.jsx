@@ -273,8 +273,10 @@ function HomePage({ onCarouselFinish }) {
 
 function AppLayout() {
     const location = useLocation();
-    const isCheckout =
-        location.pathname === '/priority-appointment-checkout';
+
+    const isCheckout = location.pathname.startsWith(
+        '/priority-appointment-checkout'
+    );
 
     const [showCouponList, setShowCouponList] = useState(false);
     const [assignedCoupons, setAssignedCoupons] = useState([]);
@@ -329,8 +331,6 @@ function AppLayout() {
             }
         };
 
-        // BookingForm emite este evento solo tras guardar correctamente
-        // la solicitud en el backend.
         const handleCouponUsed = event => {
             const code =
                 typeof event.detail === 'string'
@@ -418,7 +418,7 @@ function AppLayout() {
         if (!coupon?.code) return;
 
         // CouponListModal ya guarda y aplica el código.
-        // Aquí solo cerramos la lista; aún no se marca como usado.
+        // Solo cerramos la lista; el envío exitoso lo marcará como usado.
         setShowCouponList(false);
     };
 
@@ -469,6 +469,11 @@ function AppLayout() {
 
                 <Route
                     path="/priority-appointment-checkout"
+                    element={<PriorityAppointmentCheckout />}
+                />
+
+                <Route
+                    path="/priority-appointment-checkout/:name/:amountUsd"
                     element={<PriorityAppointmentCheckout />}
                 />
             </Routes>

@@ -7,7 +7,7 @@ import {
     useStripe,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './styles/PriorityAppointmentCheckout.scss';
 
 const stripePromise = loadStripe(
@@ -15,6 +15,7 @@ const stripePromise = loadStripe(
 );
 
 const CONTACT_STORAGE_KEY = 'priorityBookingContact';
+const DEFAULT_USD_AMOUNT = 70;
 
 function getPriorityContact() {
     try {
@@ -55,7 +56,13 @@ function formatMoney(amountMinor, currency) {
     }).format(amountMinor / 100);
 }
 
-function CheckoutForm({ amount, currency, contact }) {
+function CheckoutForm({
+    amount,
+    currency,
+    contact,
+    customerName,
+    customLink,
+}) {
     const navigate = useNavigate();
     const stripe = useStripe();
     const elements = useElements();
@@ -88,10 +95,10 @@ function CheckoutForm({ amount, currency, contact }) {
                 },
                 body: JSON.stringify({
                     paymentIntentId,
-                    bookingId: contact.bookingId,
-                    name: contact.name,
-                    phone: contact.phone,
-                    email: contact.email || '',
+                    bookingId: contact?.bookingId || '',
+                    name: customerName,
+                    phone: customLink ? '' : contact?.phone || '',
+                    email: customLink ? '' : contact?.email || '',
                 }),
             }
         );
@@ -122,8 +129,8 @@ function CheckoutForm({ amount, currency, contact }) {
         let paymentIntentId = pendingPaymentIntentId;
 
         try {
-            // Si Stripe ya aprobó el pago, permite reintentar la confirmación
-            // de la cita sin volver a cobrar.
+            // Reintenta la confirmación sin volver a cobrar si Stripe
+            // ya aprobó el pago anteriormente.
             if (!paymentIntentId) {
                 const { error: submitError } = await elements.submit();
 
@@ -137,7 +144,7 @@ function CheckoutForm({ amount, currency, contact }) {
                 const result = await stripe.confirmPayment({
                     elements,
                     confirmParams: {
-                        return_url: `${window.location.origin}/priority-appointment-checkout`,
+                        return_url: `${window.location.origin}${window.location.pathname}`,
                     },
                     redirect: 'if_required',
                 });
@@ -159,10 +166,12 @@ function CheckoutForm({ amount, currency, contact }) {
 
             await confirmAppointment(paymentIntentId);
 
-            try {
-                sessionStorage.removeItem(CONTACT_STORAGE_KEY);
-            } catch {
-                // La cita ya se confirmó; no hace falta interrumpir el flujo.
+            if (!customLink) {
+                try {
+                    sessionStorage.removeItem(CONTACT_STORAGE_KEY);
+                } catch {
+                    // La cita ya se confirmó; no se interrumpe el flujo.
+                }
             }
 
             setShowConfirmation(true);
@@ -212,7 +221,7 @@ function CheckoutForm({ amount, currency, contact }) {
                 </button>
 
                 <p className="priority-checkout__secure">
-                    Pago seguro procesado por Stripe. 
+                    Pago seguro procesado por Stripe.
                 </p>
             </form>
 
@@ -257,7 +266,25 @@ function CheckoutForm({ amount, currency, contact }) {
 }
 
 export default function PriorityAppointmentCheckout() {
+    const { name: urlName, amountUsd: urlAmountUsd } = useParams();
     const [contact] = useState(getPriorityContact);
+
+    const customLink =
+        urlName !== undefined || urlAmountUsd !== undefined;
+
+    const customerName = customLink
+        ? (urlName || '').trim()
+        : (contact?.name || '').trim();
+
+    const amountUsd = customLink
+        ? Number(urlAmountUsd)
+        : DEFAULT_USD_AMOUNT;
+
+    const validCustomLink =
+        !customLink ||
+        (customerName.length > 0 &&
+            Number.isFinite(amountUsd) &&
+            amountUsd > 0);
 
     const [date, setDate] = useState('');
     const [slots, setSlots] = useState([]);
@@ -296,10 +323,23 @@ export default function PriorityAppointmentCheckout() {
         async function loadPrice() {
             setLoadingPrice(true);
             setPriceError('');
+            setPriceQuote(null);
+
+            if (!validCustomLink) {
+                setPriceError(
+                    'La liga debe incluir un nombre y un importe USD válido.'
+                );
+                setLoadingPrice(false);
+                return;
+            }
 
             try {
+                const query = new URLSearchParams({
+                    amountUsd: String(amountUsd),
+                });
+
                 const response = await fetch(
-                    '/api/payments/priority-price',
+                    `/api/payments/priority-price?${query.toString()}`,
                     { signal: controller.signal }
                 );
 
@@ -340,7 +380,7 @@ export default function PriorityAppointmentCheckout() {
         loadPrice();
 
         return () => controller.abort();
-    }, []);
+    }, [amountUsd, validCustomLink]);
 
     const handleDateChange = async event => {
         const selectedDate = event.target.value;
@@ -405,7 +445,17 @@ export default function PriorityAppointmentCheckout() {
     const handleContinue = async () => {
         if (!date || !selectedTime || loading) return;
 
-        if (!contact?.bookingId || !contact?.name || !contact?.phone) {
+        if (!validCustomLink) {
+            setError(
+                'La liga debe incluir un nombre y un importe USD válido.'
+            );
+            return;
+        }
+
+        if (
+            !customLink &&
+            (!contact?.bookingId || !contact?.name || !contact?.phone)
+        ) {
             setError(
                 'No encontramos tus datos de contacto. Regresa al formulario y envíalo de nuevo.'
             );
@@ -433,7 +483,11 @@ export default function PriorityAppointmentCheckout() {
                     body: JSON.stringify({
                         appointmentDate: date,
                         appointmentTime: selectedTime,
-                        bookingId: contact.bookingId,
+                        bookingId: contact?.bookingId || '',
+                        name: customerName,
+                        phone: customLink ? '' : contact?.phone || '',
+                        email: customLink ? '' : contact?.email || '',
+                        amountUsd,
                     }),
                 }
             );
@@ -456,7 +510,6 @@ export default function PriorityAppointmentCheckout() {
                 );
             }
 
-            // Usa el importe confirmado por el backend al crear el PaymentIntent.
             setPriceQuote(previous => ({
                 ...previous,
                 ...data,
@@ -490,7 +543,9 @@ export default function PriorityAppointmentCheckout() {
 
                 <h1>Agenda tu cita prioritaria</h1>
                 <p>
-                    Elige una fecha y un horario disponible para tu cita.
+                    {customLink
+                        ? `Pago personalizado para ${customerName}. Elige la fecha y el horario de tu cita.`
+                        : 'Elige una fecha y un horario disponible para tu cita.'}
                 </p>
             </header>
 
@@ -584,7 +639,8 @@ export default function PriorityAppointmentCheckout() {
                                 checkingDate ||
                                 loading ||
                                 loadingPrice ||
-                                !priceQuote
+                                !priceQuote ||
+                                !validCustomLink
                             }
                             onClick={handleContinue}
                         >
@@ -604,6 +660,11 @@ export default function PriorityAppointmentCheckout() {
                     </span>
 
                     <h2>Prioridad de cita</h2>
+
+                    {customLink && customerName && (
+                        <p>Cliente: {customerName}</p>
+                    )}
+
                     <p>Solicitud de atención prioritaria</p>
 
                     {selectedSlot && (
@@ -659,7 +720,10 @@ export default function PriorityAppointmentCheckout() {
                         </p>
                     )}
 
-                    
+                    <small>
+                        La disponibilidad se vuelve a comprobar en el
+                        servidor antes del pago.
+                    </small>
                 </aside>
             </div>
 
@@ -690,6 +754,8 @@ export default function PriorityAppointmentCheckout() {
                             amount={priceQuote.amountMinor}
                             currency={priceQuote.currency}
                             contact={contact}
+                            customerName={customerName}
+                            customLink={customLink}
                         />
                     </Elements>
                 </section>

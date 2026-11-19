@@ -80,7 +80,7 @@ function isValidDate(value) {
     return parsed.toISOString().slice(0, 10) === value;
 }
 
-// Convierte una hora local de la zona configurada a un instante UTC.
+// Convierte una hora local de la zona configurada a una fecha UTC.
 function localTimeToDate(date, hour, minute = 0) {
     const [year, month, day] = date.split('-').map(Number);
     const targetAsUtc = Date.UTC(
@@ -150,12 +150,12 @@ async function getBusyPeriods(dayStart, dayEnd) {
     return calendarData?.busy || [];
 }
 
-async function findEventByBookingId(bookingId) {
-    if (!bookingId) return null;
+async function findEventByReference(reference) {
+    if (!reference) return null;
 
     const response = await calendar.events.list({
         calendarId,
-        privateExtendedProperty: `bookingId=${bookingId}`,
+        privateExtendedProperty: `bookingId=${reference}`,
         maxResults: 1,
         singleEvents: true,
     });
@@ -230,8 +230,8 @@ export async function createAppointmentEvent({
     startTime,
     bookingId,
     name,
-    email,
-    phone,
+    email = '',
+    phone = '',
 }) {
     if (!isValidDate(date)) {
         throw new Error('La fecha de la cita no es válida.');
@@ -244,9 +244,21 @@ export async function createAppointmentEvent({
         throw new Error('El horario de la cita no es válido.');
     }
 
-    // En un reintento, devuelve el evento ya creado para esta solicitud.
+    const normalizedName =
+        typeof name === 'string' ? name.trim() : '';
+    const normalizedEmail =
+        typeof email === 'string' ? email.trim() : '';
+    const normalizedPhone =
+        typeof phone === 'string' ? phone.trim() : '';
+
+    if (!normalizedName) {
+        throw new Error('Falta el nombre para agendar la cita.');
+    }
+
+    // En las ligas personalizadas, el controlador puede pasar el ID del pago
+    // como bookingId para reconocer un reintento.
     if (bookingId) {
-        const existingEvent = await findEventByBookingId(bookingId);
+        const existingEvent = await findEventByReference(bookingId);
 
         if (existingEvent) {
             return existingEvent;
@@ -268,10 +280,10 @@ export async function createAppointmentEvent({
 
     const description = [
         'Cita prioritaria',
-        bookingId ? `ID de solicitud: ${bookingId}` : null,
-        name ? `Nombre: ${name}` : null,
-        email ? `Correo: ${email}` : null,
-        phone ? `Teléfono: ${phone}` : null,
+        bookingId ? `Referencia: ${bookingId}` : null,
+        `Nombre: ${normalizedName}`,
+        normalizedEmail ? `Correo: ${normalizedEmail}` : null,
+        normalizedPhone ? `Teléfono: ${normalizedPhone}` : null,
     ]
         .filter(Boolean)
         .join('\n');
@@ -280,7 +292,7 @@ export async function createAppointmentEvent({
         calendarId,
         sendUpdates: 'none',
         requestBody: {
-            summary: `Cita prioritaria${name ? ` - ${name}` : ''}`,
+            summary: `Cita prioritaria - ${normalizedName}`,
             description,
             start: {
                 dateTime: selectedSlot.startDateTime,

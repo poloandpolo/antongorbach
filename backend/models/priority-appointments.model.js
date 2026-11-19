@@ -14,7 +14,7 @@ function getSheetsConfig() {
         process.env.GOOGLE_PRIORITY_SHEET_ID;
     const range =
         process.env.GOOGLE_PRIORITY_SHEET_RANGE ||
-        "'Citas prioritarias'!A:I";
+        "'Citas prioritarias'!A:M";
 
     if (!credentialsPath) {
         throw new Error(
@@ -28,9 +28,24 @@ function getSheetsConfig() {
         );
     }
 
+    const separatorIndex = range.lastIndexOf('!');
+
+    if (separatorIndex === -1) {
+        throw new Error(
+            'GOOGLE_PRIORITY_SHEET_RANGE debe incluir el nombre de la pestaña y el rango, por ejemplo: \'Citas prioritarias\'!A:M'
+        );
+    }
+
+    const sheetName = range.slice(0, separatorIndex);
+    const appendRange = range.slice(separatorIndex + 1);
+
     return {
-        credentialsPath: path.resolve(backendDir, credentialsPath),
+        credentialsPath: path.isAbsolute(credentialsPath)
+            ? credentialsPath
+            : path.resolve(backendDir, credentialsPath),
         spreadsheetId,
+        sheetName,
+        appendRange,
         range,
     };
 }
@@ -51,18 +66,34 @@ async function getSheetsClient() {
     });
 }
 
+function numberOrBlank(value) {
+    if (value === '' || value === null || value === undefined) {
+        return '';
+    }
+
+    const number = Number(value);
+    return Number.isFinite(number) ? number : '';
+}
+
 export async function savePriorityAppointment(appointment) {
+    if (!appointment?.paymentIntentId) {
+        throw new Error(
+            'Falta paymentIntentId al guardar el pago prioritario.'
+        );
+    }
+
     const {
-        credentialsPath: _credentialsPath,
         spreadsheetId,
+        sheetName,
+        appendRange,
         range,
     } = getSheetsConfig();
 
     const sheets = await getSheetsClient();
 
-    // La columna I guarda el ID de Stripe y sirve para evitar filas duplicadas.
-    const tabName = range.split('!')[0];
-    const paymentIdsRange = `${tabName}!I:I`;
+    // La columna I contiene el PaymentIntent ID.
+    // Se empieza en la fila 2 para no leer el encabezado.
+    const paymentIdsRange = `${sheetName}!I2:I`;
 
     const existingPayments = await sheets.spreadsheets.values.get({
         spreadsheetId,
@@ -80,19 +111,23 @@ export async function savePriorityAppointment(appointment) {
     await sheets.spreadsheets.values.append({
         spreadsheetId,
         range,
-        valueInputOption: 'USER_ENTERED',
+        valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
         requestBody: {
             values: [[
-                new Date().toISOString(),
-                appointment.bookingId,
-                appointment.name,
-                appointment.phone,
-                appointment.email,
-                appointment.appointmentDate,
-                appointment.appointmentTime,
-                appointment.eventId,
-                appointment.paymentIntentId,
+                new Date().toISOString(),              // A: Fecha de pago
+                appointment.bookingId || '',           // B: ID de solicitud
+                appointment.name || '',                // C: Nombre
+                appointment.phone || '',               // D: Teléfono
+                appointment.email || '',               // E: Correo
+                appointment.appointmentDate || '',     // F: Fecha de cita
+                appointment.appointmentTime || '',     // G: Hora de cita
+                appointment.eventId || '',             // H: ID del evento
+                appointment.paymentIntentId,           // I: ID de Stripe
+                numberOrBlank(appointment.usdAmount),  // J: Importe USD
+                numberOrBlank(appointment.mxnAmount),  // K: Cargo MXN
+                numberOrBlank(appointment.exchangeRate), // L: Tipo de cambio
+                appointment.exchangeRateDate || '',    // M: Fecha del tipo de cambio
             ]],
         },
     });
