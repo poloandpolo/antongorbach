@@ -106,7 +106,8 @@ function assignEyeballCoupon() {
     }
 
     const now = Date.now();
-    const expiration = new Date(now);
+    const expiresAt =
+    Date.now() + validityHours * 60 * 60 * 1000;
 
     expiration.setMonth(
         expiration.getMonth() +
