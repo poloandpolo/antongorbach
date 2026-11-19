@@ -106,8 +106,7 @@ function assignEyeballCoupon() {
     }
 
     const now = Date.now();
-    const expiresAt =
-    Date.now() + validityHours * 60 * 60 * 1000;
+    const expiration = new Date(now);
 
     expiration.setMonth(
         expiration.getMonth() +
@@ -419,7 +418,7 @@ function AppLayout() {
         if (!coupon?.code) return;
 
         // CouponListModal ya guarda y aplica el código.
-        // Solo cerramos la lista; el envío exitoso lo marcará como usado.
+        // El envío exitoso del formulario lo marcará como usado.
         setShowCouponList(false);
     };
 
