@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
 import '../components/styles/MainCarousel.scss';
 
@@ -10,6 +16,42 @@ import Implant from '../../Images/Maincarrousel/Implant.jpeg';
 import Tongue from '../../Images/Maincarrousel/Tongue.jpeg';
 import Tattoo from '../../Images/Maincarrousel/Tattoo.jpeg';
 
+function preloadAndDecode(src) {
+    return new Promise(resolve => {
+        const image = new Image();
+        let settled = false;
+
+        const finish = async () => {
+            if (settled) return;
+            settled = true;
+
+            try {
+                if (typeof image.decode === 'function') {
+                    await image.decode();
+                }
+            } catch {
+                // Si decode no está disponible o falla, no bloqueamos el carrusel.
+            }
+
+            resolve(src);
+        };
+
+        image.onload = finish;
+        image.onerror = () => {
+            if (settled) return;
+            settled = true;
+            resolve(src);
+        };
+
+        image.src = src;
+
+        // Cubre el caso de una imagen que ya estaba en caché.
+        if (image.complete && image.naturalWidth > 0) {
+            finish();
+        }
+    });
+}
+
 const Slider = ({ onFinish }) => {
     const firstImageRef = useRef(null);
 
@@ -19,18 +61,32 @@ const Slider = ({ onFinish }) => {
     const [currentImage, setCurrentImage] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [firstImageLoaded, setFirstImageLoaded] = useState(false);
+    const [loadedImages, setLoadedImages] = useState(() => new Set());
 
-    const slides = [
-        {
-            image: isDesktop ? Anton_1_desktop : Anton_1_mobile,
-            title: null,
-        },
-        { image: Eyeball, title: 'Eyeball Tattoo' },
-        { image: Scar, title: 'Scarification' },
-        { image: Tongue, title: 'Tongue Split' },
-        { image: Implant, title: ['Subdermal', 'Implant'] },
-        { image: Tattoo, title: 'Tattoo' },
-    ];
+    const slides = useMemo(
+        () => [
+            {
+                image: isDesktop ? Anton_1_desktop : Anton_1_mobile,
+                title: null,
+            },
+            { image: Eyeball, title: 'Eyeball Tattoo' },
+            { image: Scar, title: 'Scarification' },
+            { image: Tongue, title: 'Tongue Split' },
+            { image: Implant, title: ['Subdermal', 'Implant'] },
+            { image: Tattoo, title: 'Tattoo' },
+        ],
+        [isDesktop]
+    );
+
+    const markImageLoaded = useCallback(src => {
+        setLoadedImages(previous => {
+            if (previous.has(src)) return previous;
+
+            const next = new Set(previous);
+            next.add(src);
+            return next;
+        });
+    }, []);
 
     useEffect(() => {
         const mediaQuery = window.matchMedia('(min-width: 769px)');
@@ -43,7 +99,7 @@ const Slider = ({ onFinish }) => {
         };
     }, []);
 
-    // Detecta también si el navegador ya tiene la imagen en caché.
+    // Detecta la primera imagen incluso si el navegador ya la tenía en caché.
     useEffect(() => {
         if (currentImage !== 0 || isTransitioning || firstImageLoaded) {
             return undefined;
@@ -55,16 +111,68 @@ const Slider = ({ onFinish }) => {
             return undefined;
         }
 
-        const frame = window.requestAnimationFrame(() => {
+        let cancelled = false;
+
+        const markReady = () => {
+            if (cancelled) return;
+
+            markImageLoaded(slides[0].image);
             setFirstImageLoaded(true);
+        };
+
+        if (typeof image.decode === 'function') {
+            image.decode().catch(() => {}).then(markReady);
+        } else {
+            markReady();
+        }
+
+        return () => {
+            cancelled = true;
+        };
+    }, [
+        currentImage,
+        firstImageLoaded,
+        isTransitioning,
+        isDesktop,
+        markImageLoaded,
+        slides,
+    ]);
+
+    // La primera foto se prioriza; después se precargan las demás.
+    useEffect(() => {
+        if (!firstImageLoaded) return undefined;
+
+        let cancelled = false;
+
+        const remainingSources = [
+            ...new Set(slides.slice(1).map(slide => slide.image)),
+        ];
+
+        Promise.all(remainingSources.map(preloadAndDecode)).then(sources => {
+            if (cancelled) return;
+
+            setLoadedImages(previous => {
+                const next = new Set(previous);
+                sources.forEach(src => next.add(src));
+                return next;
+            });
         });
 
-        return () => window.cancelAnimationFrame(frame);
-    }, [currentImage, isTransitioning, firstImageLoaded, isDesktop]);
+        return () => {
+            cancelled = true;
+        };
+    }, [firstImageLoaded, slides]);
 
     useEffect(() => {
-        // Espera a que la primera imagen esté lista.
         if (currentImage === 0 && !firstImageLoaded) {
+            return undefined;
+        }
+
+        const isLastSlide = currentImage === slides.length - 1;
+        const nextSlide = slides[currentImage + 1];
+
+        // No comienza la transición hasta que la imagen siguiente esté decodificada.
+        if (!isLastSlide && !loadedImages.has(nextSlide.image)) {
             return undefined;
         }
 
@@ -72,7 +180,7 @@ const Slider = ({ onFinish }) => {
         const slideDuration = 900;
         const transitionDuration = 800;
 
-        if (currentImage === slides.length - 1) {
+        if (isLastSlide) {
             const finishTimeout = window.setTimeout(() => {
                 onFinish?.();
             }, slideDuration);
@@ -104,7 +212,8 @@ const Slider = ({ onFinish }) => {
     }, [
         currentImage,
         firstImageLoaded,
-        slides.length,
+        loadedImages,
+        slides,
         onFinish,
     ]);
 
@@ -115,18 +224,28 @@ const Slider = ({ onFinish }) => {
             ? slides[currentImage + 1]
             : currentSlide;
 
-    const handleFirstImageLoad = () => {
-        if (currentImage !== 0 || isTransitioning || firstImageLoaded) {
-            return;
+    const handleImageLoad = async (src, event) => {
+        const image = event.currentTarget;
+
+        try {
+            if (typeof image.decode === 'function') {
+                await image.decode();
+            }
+        } catch {
+            // La imagen ya terminó de cargar; seguimos aunque decode falle.
         }
 
-        window.requestAnimationFrame(() => {
+        markImageLoaded(src);
+
+        if (src === slides[0].image && currentImage === 0) {
             setFirstImageLoaded(true);
-        });
+        }
     };
 
-    const handleFirstImageError = () => {
-        if (currentImage === 0 && !isTransitioning) {
+    const handleImageError = src => {
+        markImageLoaded(src);
+
+        if (src === slides[0].image && currentImage === 0) {
             setFirstImageLoaded(true);
         }
     };
@@ -199,8 +318,13 @@ const Slider = ({ onFinish }) => {
                             ? getTitleText(currentSlide.title)
                             : 'Anton Gorbach'
                     }
-                    onLoad={handleFirstImageLoad}
-                    onError={handleFirstImageError}
+                    loading={isFirstImage ? 'eager' : 'lazy'}
+                    fetchPriority={isFirstImage ? 'high' : 'auto'}
+                    decoding="async"
+                    onLoad={event =>
+                        handleImageLoad(currentSlide.image, event)
+                    }
+                    onError={() => handleImageError(currentSlide.image)}
                 />
             </div>
 
