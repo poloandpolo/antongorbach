@@ -11,6 +11,11 @@ import 'slick-carousel/slick/slick-theme.css';
 import BookingForm from '../components/BookingForm';
 import Footer from '../components/Footer';
 
+import Tougue1 from '../../Images/Procedimientos/ToungeSplit/Tongue_1.jpeg'
+import Tougue2 from '../../Images/Procedimientos/ToungeSplit/Tongue_2.jpeg'
+import Tougue3 from '../../Images/Procedimientos/ToungeSplit/Tongue_3.jpeg'
+
+
 import useProcedureCoupon from '../hooks/useProcedureCoupon';
 import { COUPONS } from '../data/coupons';
 
@@ -68,21 +73,21 @@ export default function ProceduresTongueSplit() {
                 <Slider {...settings}>
                     <div className="procedures-tongue-split__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792168248/WhatsApp_Image_2026-09-21_at_4.31.09_PM_spkirf.jpg"
+                            src={Tougue3}
                             alt="Procedimiento de bifurcación lingual"
                         />
                     </div>
 
                     <div className="procedures-tongue-split__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792168248/WhatsApp_Image_2026-09-21_at_4.31.20_PM_vdkcmy.jpg"
+                            src={Tougue2}
                             alt="Detalle de modificación lingual"
                         />
                     </div>
 
                     <div className="procedures-tongue-split__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792168248/WhatsApp_Image_2026-09-21_at_4.31.56_PM_pzullh.jpg"
+                            src={Tougue1}
                             alt="Resultado de una bifurcación lingual"
                         />
                     </div>

@@ -13,6 +13,11 @@ import CouponButton from '../components/CouponButton';
 import CouponListModal from '../components/CouponListModal';
 import useProcedureCoupon from '../hooks/useProcedureCoupon';
 
+import Scar1 from '../../Images/Procedimientos/Scarification/Scar_1.jpeg'
+import Scar2 from '../../Images/Procedimientos/Scarification/Scar_2.jpeg'
+import Scar3 from '../../Images/Procedimientos/Scarification/Scar_3.jpeg'
+
+
 const Slider = SlickModule.default ?? SlickModule;
 
 const COUPONS = [
@@ -102,21 +107,21 @@ export default function ProceduresScarification() {
                 <Slider {...settings}>
                     <div className="procedures-scarification__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792167180/WhatsApp_Image_2026-09-21_at_4.30.46_PM_1_skaxs2.jpg"
+                            src={Scar1}
                             alt="Trabajo de escarificación artística"
                         />
                     </div>
 
                     <div className="procedures-scarification__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792167181/WhatsApp_Image_2026-09-21_at_4.31.19_PM_fqaftd.jpg"
+                            src={Scar2}
                             alt="Detalle de un diseño de escarificación"
                         />
                     </div>
 
                     <div className="procedures-scarification__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792167181/WhatsApp_Image_2026-09-21_at_4.31.20_PM_m6d2on.jpg"
+                            src={Scar3}
                             alt="Resultado artístico de escarificación"
                         />
                     </div>

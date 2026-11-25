@@ -2,547 +2,284 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import '../components/styles/MainCarousel.scss';
 
-const MainCarousel = ({ onFinish }) => {
-  // ==========================================
-  // DETECTAR DESKTOP / MOBILE
-  // ==========================================
+import Anton_1_mobile from '../../Images/Maincarrousel/Anton_1_mobile.jpeg';
+import Anton_1_desktop from '../../Images/Maincarrousel/Anton_1_desktop.png';
+import Eyeball from '../../Images/Maincarrousel/Eyeball.jpeg';
+import Scar from '../../Images/Maincarrousel/Scar.jpeg';
+import Implant from '../../Images/Maincarrousel/Implant.jpeg';
+import Tongue from '../../Images/Maincarrousel/Tongue.jpeg';
+import Tattoo from '../../Images/Maincarrousel/Tattoo.jpeg';
 
-  const [isDesktop, setIsDesktop] = useState(() =>
-    window.matchMedia('(min-width: 769px)').matches
-  );
+const Slider = ({ onFinish }) => {
+    const firstImageRef = useRef(null);
 
-  // ==========================================
-  // SLIDES
-  // ==========================================
-
-  const slides = [
-    {
-      image: isDesktop
-        ? 'https://res.cloudinary.com/djir3xi7x/image/upload/v1791391326/frame-9_jomexs.png'
-        : 'https://res.cloudinary.com/djir3xi7x/image/upload/v1791394615/WhatsApp_Image_2026-09-21_at_4.30.44_PM_hgsj3c.png',
-      title: null,
-    },
-    {
-      image:
-        'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193186/WhatsApp_Image_2026-09-21_at_4.30.48_PM_mwcsgi.jpg',
-      title: 'Eyeball Tattoo',
-    },
-    {
-      image:
-        'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193186/WhatsApp_Image_2026-09-21_at_4.31.20_PM_xhruwu.jpg',
-      title: 'Scarification',
-    },
-    {
-      image:
-        'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193186/WhatsApp_Image_2026-09-21_at_4.31.56_PM_r2uhkv.jpg',
-      title: 'Tongue Split',
-    },
-    {
-      image:
-        'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193185/WhatsApp_Image_2026-09-21_at_4.30.48_PM_1_o4mju2.jpg',
-      title: ['Subdermal', 'Implant'],
-    },
-    {
-      image:
-        'https://res.cloudinary.com/djir3xi7x/image/upload/v1790193186/WhatsApp_Image_2026-09-21_at_4.31.17_PM_v6nc3y.jpg',
-      title: 'Tattoo',
-    },
-  ];
-
-  // ==========================================
-  // ESTADOS
-  // ==========================================
-
-  const [currentImage, setCurrentImage] = useState(0);
-
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  const [isIntroVideoPlaying, setIsIntroVideoPlaying] =
-    useState(true);
-
-  // Controla cuándo la primera imagen aparece
-  // durante los últimos 200ms del video.
-  const [showFirstSlide, setShowFirstSlide] = useState(false);
-
-  const videoRef = useRef(null);
-
-  // ==========================================
-  // DETECTAR CAMBIO DESKTOP / MOBILE
-  // ==========================================
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(
-      '(min-width: 769px)'
+    const [isDesktop, setIsDesktop] = useState(() =>
+        window.matchMedia('(min-width: 769px)').matches
     );
+    const [currentImage, setCurrentImage] = useState(0);
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [firstImageLoaded, setFirstImageLoaded] = useState(false);
 
-    const handleChange = (event) => {
-      setIsDesktop(event.matches);
-    };
+    const slides = [
+        {
+            image: isDesktop ? Anton_1_desktop : Anton_1_mobile,
+            title: null,
+        },
+        { image: Eyeball, title: 'Eyeball Tattoo' },
+        { image: Scar, title: 'Scarification' },
+        { image: Tongue, title: 'Tongue Split' },
+        { image: Implant, title: ['Subdermal', 'Implant'] },
+        { image: Tattoo, title: 'Tattoo' },
+    ];
 
-    mediaQuery.addEventListener('change', handleChange);
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 769px)');
+        const handleChange = event => setIsDesktop(event.matches);
 
-    return () => {
-      mediaQuery.removeEventListener(
-        'change',
-        handleChange
-      );
-    };
-  }, []);
+        mediaQuery.addEventListener('change', handleChange);
 
-  // ==========================================
-  // REPRODUCIR VIDEO
-  // ==========================================
+        return () => {
+            mediaQuery.removeEventListener('change', handleChange);
+        };
+    }, []);
 
-  useEffect(() => {
-    if (!isIntroVideoPlaying) {
-      return;
-    }
+    // Detecta también si el navegador ya tiene la imagen en caché.
+    useEffect(() => {
+        if (currentImage !== 0 || isTransitioning || firstImageLoaded) {
+            return undefined;
+        }
 
-    const video = videoRef.current;
+        const image = firstImageRef.current;
 
-    if (!video) {
-      return;
-    }
+        if (!image?.complete || image.naturalWidth === 0) {
+            return undefined;
+        }
 
-    video.muted = true;
-    video.playsInline = true;
+        const frame = window.requestAnimationFrame(() => {
+            setFirstImageLoaded(true);
+        });
 
-    const playVideo = async () => {
-      try {
-        await video.play();
-      } catch (error) {
-        console.error(
-          'No se pudo reproducir el video:',
-          error
-        );
-      }
-    };
+        return () => window.cancelAnimationFrame(frame);
+    }, [currentImage, isTransitioning, firstImageLoaded, isDesktop]);
 
-    if (video.readyState >= 2) {
-      playVideo();
-    } else {
-      video.addEventListener('canplay', playVideo, {
-        once: true,
-      });
-    }
+    useEffect(() => {
+        // Espera a que la primera imagen esté lista.
+        if (currentImage === 0 && !firstImageLoaded) {
+            return undefined;
+        }
 
-    return () => {
-      video.removeEventListener('canplay', playVideo);
-    };
-  }, [isDesktop, isIntroVideoPlaying]);
+        const firstSlideDuration = 2900;
+        const slideDuration = 900;
+        const transitionDuration = 800;
 
-  // ==========================================
-  // MOSTRAR PRIMER SLIDE 200ms ANTES
-  // ==========================================
+        if (currentImage === slides.length - 1) {
+            const finishTimeout = window.setTimeout(() => {
+                onFinish?.();
+            }, slideDuration);
 
-  useEffect(() => {
-    if (!isIntroVideoPlaying) {
-      return;
-    }
+            return () => window.clearTimeout(finishTimeout);
+        }
 
-    const video = videoRef.current;
+        const duration =
+            currentImage === 0 ? firstSlideDuration : slideDuration;
 
-    if (!video) {
-      return;
-    }
+        let transitionTimeout;
 
-    let animationFrame;
+        const slideTimeout = window.setTimeout(() => {
+            setIsTransitioning(true);
 
-    const checkVideoTime = () => {
-      if (
-        video.duration &&
-        video.duration - video.currentTime <= 0.2
-      ) {
-        setShowFirstSlide(true);
-        return;
-      }
+            transitionTimeout = window.setTimeout(() => {
+                setCurrentImage(previous => previous + 1);
+                setIsTransitioning(false);
+            }, transitionDuration);
+        }, duration);
 
-      animationFrame =
-        requestAnimationFrame(checkVideoTime);
-    };
+        return () => {
+            window.clearTimeout(slideTimeout);
 
-    animationFrame =
-      requestAnimationFrame(checkVideoTime);
-
-    return () => {
-      cancelAnimationFrame(animationFrame);
-    };
-  }, [isIntroVideoPlaying]);
-
-  // ==========================================
-  // FINAL DEL VIDEO
-  // ==========================================
-
-  const handleIntroVideoEnded = () => {
-    // Nos aseguramos de que la imagen ya esté visible
-    // antes de desmontar el video.
-    setShowFirstSlide(true);
-
-    setIsIntroVideoPlaying(false);
-  };
-
-  // ==========================================
-  // CARRUSEL
-  // ==========================================
-
-  useEffect(() => {
-    if (isIntroVideoPlaying) {
-      return;
-    }
-
-    const introDuration = 3800;
-    const slideDuration = 900;
-    const transitionDuration = 800;
-
-    // ==========================================
-    // FINAL DEL CARRUSEL
-    // ==========================================
-
-    if (currentImage === slides.length - 1) {
-      const finishTimeout = setTimeout(() => {
-        onFinish?.();
-      }, slideDuration);
-
-      return () => {
-        clearTimeout(finishTimeout);
-      };
-    }
-
-    const duration =
-      currentImage === 0
-        ? introDuration
-        : slideDuration;
-
-    let transitionTimeout;
-
-    // ==========================================
-    // CAMBIO DE SLIDE
-    // ==========================================
-
-    const slideTimeout = setTimeout(() => {
-      setIsTransitioning(true);
-
-      transitionTimeout = setTimeout(() => {
-        setCurrentImage((prev) => prev + 1);
-        setIsTransitioning(false);
-      }, transitionDuration);
-    }, duration);
-
-    return () => {
-      clearTimeout(slideTimeout);
-
-      if (transitionTimeout) {
-        clearTimeout(transitionTimeout);
-      }
-    };
-  }, [
-    currentImage,
-    slides.length,
-    isIntroVideoPlaying,
-    onFinish,
-  ]);
-
-  // ==========================================
-  // SLIDES ACTUALES
-  // ==========================================
-
-  const currentSlide = slides[currentImage];
-
-  const nextSlide =
-    currentImage < slides.length - 1
-      ? slides[currentImage + 1]
-      : currentSlide;
-
-  // ==========================================
-  // TÍTULOS
-  // ==========================================
-
-  const renderTitle = (title) => {
-    if (Array.isArray(title)) {
-      return (
-        <>
-          {title.map((line, index) => (
-            <React.Fragment key={index}>
-              {line}
-
-              {index < title.length - 1 && <br />}
-            </React.Fragment>
-          ))}
-        </>
-      );
-    }
-
-    return title;
-  };
-
-  const getTitleText = (title) => {
-    if (Array.isArray(title)) {
-      return title.join(' ');
-    }
-
-    return title;
-  };
-
-  // ==========================================
-  // RENDER
-  // ==========================================
-
-  return (
-    <div className="main-carousel">
-
-      {/* ======================================
-          INTRO VIDEO
-      ====================================== */}
-
-      {isIntroVideoPlaying && (
-        <div className="main-carousel__intro-video">
-
-          {/* ==================================
-              PRIMER SLIDE PRE-CARGADO
-
-              Permanece invisible mientras
-              reproduce el video.
-
-              Se vuelve visible durante los
-              últimos 200ms.
-          ================================== */}
-
-          <img
-            className={`main-carousel__preload-slide ${
-              showFirstSlide
-                ? 'main-carousel__preload-slide--visible'
-                : ''
-            }`}
-            src={currentSlide.image}
-            alt=""
-          />
-
-          {/* ==================================
-              VIDEO
-          ================================== */}
-
-          <video
-            ref={videoRef}
-            key={
-              isDesktop
-                ? 'desktop-video'
-                : 'mobile-video'
+            if (transitionTimeout) {
+                window.clearTimeout(transitionTimeout);
             }
-            src={
-              isDesktop
-                ? 'https://res.cloudinary.com/djir3xi7x/video/upload/v1791391220/zsky-a6b95daa_2_pcu7rn.mp4'
-                : 'https://res.cloudinary.com/djir3xi7x/video/upload/v1791386058/zsky-creation-9.mp4_v_2_xdu8pz.mp4'
-            }
-            autoPlay
-            muted
-            playsInline
-            preload="auto"
-            onEnded={handleIntroVideoEnded}
-          />
+        };
+    }, [
+        currentImage,
+        firstImageLoaded,
+        slides.length,
+        onFinish,
+    ]);
 
-        </div>
-      )}
+    const currentSlide = slides[currentImage];
 
-      {/* ======================================
-          TODO EL CARRUSEL
+    const nextSlide =
+        currentImage < slides.length - 1
+            ? slides[currentImage + 1]
+            : currentSlide;
 
-          SE MONTA DESPUÉS DEL VIDEO
-      ====================================== */}
+    const handleFirstImageLoad = () => {
+        if (currentImage !== 0 || isTransitioning || firstImageLoaded) {
+            return;
+        }
 
-      {!isIntroVideoPlaying && (
-        <>
-          {/* ==================================
-              FOTOGRAFÍA
-          ================================== */}
+        window.requestAnimationFrame(() => {
+            setFirstImageLoaded(true);
+        });
+    };
 
-          <div className="main-carousel__image-container">
+    const handleFirstImageError = () => {
+        if (currentImage === 0 && !isTransitioning) {
+            setFirstImageLoaded(true);
+        }
+    };
 
-            {isTransitioning && (
-              <img
-                className="
-                  main-carousel__image
-                  main-carousel__image--out
-                "
-                src={currentSlide.image}
-                alt=""
-              />
-            )}
+    const renderTitle = title => {
+        if (Array.isArray(title)) {
+            return title.map((line, index) => (
+                <React.Fragment key={index}>
+                    {line}
+                    {index < title.length - 1 && <br />}
+                </React.Fragment>
+            ));
+        }
 
-            <img
-              className={`
-                main-carousel__image
-                ${
-                  isTransitioning
-                    ? 'main-carousel__image--in'
-                    : ''
-                }
-              `}
-              src={
-                isTransitioning
-                  ? nextSlide.image
-                  : currentSlide.image
-              }
-              alt="Anton Gorbach"
-            />
+        return title;
+    };
 
-          </div>
+    const getTitleText = title =>
+        Array.isArray(title) ? title.join(' ') : title;
 
-          {/* ==================================
-              FRANJAS
-          ================================== */}
+    const isFirstImage = currentImage === 0 && !isTransitioning;
 
-          {(currentImage > 0 || isTransitioning) && (
-            <>
-              <div
-                className="
-                  main-carousel__frame
-                  main-carousel__frame--top
-                "
-              />
+    const firstImageClass = isFirstImage
+        ? firstImageLoaded
+            ? 'main-carousel__image--initial'
+            : 'main-carousel__image--waiting'
+        : '';
 
-              <div
-                className="
-                  main-carousel__frame
-                  main-carousel__frame--bottom
-                "
-              />
-            </>
-          )}
+    const mainImageKey = isFirstImage
+        ? firstImageLoaded
+            ? 'first-image-ready'
+            : 'first-image-loading'
+        : isTransitioning
+          ? `in-${currentImage + 1}`
+          : `current-${currentImage}`;
 
-          {/* ==================================
-              TÍTULO ACTUAL
-          ================================== */}
+    return (
+        <div className="main-carousel">
+            <div className="main-carousel__image-container">
+                {isTransitioning && (
+                    <img
+                        key={`out-${currentImage}`}
+                        className="
+                            main-carousel__image
+                            main-carousel__image--out
+                        "
+                        src={currentSlide.image}
+                        alt=""
+                    />
+                )}
 
-          {!isTransitioning &&
-            currentSlide.title && (
-              <div className="main-carousel__procedure">
-
-                <span
-                  data-text={getTitleText(
-                    currentSlide.title
-                  )}
-                >
-                  {renderTitle(
-                    currentSlide.title
-                  )}
-                </span>
-
-              </div>
-            )}
-
-          {/* ==================================
-              TÍTULO QUE SALE
-          ================================== */}
-
-          {isTransitioning &&
-            currentSlide.title && (
-              <div
-                className="
-                  main-carousel__procedure
-                  main-carousel__procedure--out
-                "
-              >
-
-                <span
-                  data-text={getTitleText(
-                    currentSlide.title
-                  )}
-                >
-                  {renderTitle(
-                    currentSlide.title
-                  )}
-                </span>
-
-              </div>
-            )}
-
-          {/* ==================================
-              TÍTULO QUE ENTRA
-          ================================== */}
-
-          {isTransitioning &&
-            nextSlide.title && (
-              <div
-                className="
-                  main-carousel__procedure
-                  main-carousel__procedure--in
-                "
-              >
-
-                <span
-                  data-text={getTitleText(
-                    nextSlide.title
-                  )}
-                >
-                  {renderTitle(
-                    nextSlide.title
-                  )}
-                </span>
-
-              </div>
-            )}
-
-          {/* ==================================
-              CONTENIDO DEL PRIMER SLIDE
-          ================================== */}
-
-          {currentImage === 0 && (
-            <div
-              className="
-                main-carousel__slide
-                main-carousel__slide--intro
-              "
-            >
-
-              <div className="main-carousel__intro-content">
-
-                {/* HEADER */}
-
-                <div className="main-carousel__intro-header">
-                  <span>BODY MODIFICATION</span>
-                  <span>TATTOO ARTIST</span>
-                </div>
-
-                {/* NOMBRE */}
-
-                <div className="main-carousel__intro-title">
-
-                  <p className="main-carousel__intro-name">
-
-                    <span data-text="Anton">
-                      Anton
-                    </span>
-
-                    <span data-text="Gorbach">
-                      Gorbach
-                    </span>
-
-                  </p>
-
-                </div>
-
-                {/* FOOTER */}
-
-                <footer className="main-carousel__intro-footer">
-
-                  <span>PUEBLA</span>
-                  <span>CDMX</span>
-                  <span>GUADALAJARA</span>
-
-                </footer>
-
-              </div>
-
-              <div className="main-carousel__intro-reveal" />
-
+                <img
+                    ref={isFirstImage ? firstImageRef : null}
+                    key={mainImageKey}
+                    className={`
+                        main-carousel__image
+                        ${
+                            isTransitioning
+                                ? 'main-carousel__image--in'
+                                : firstImageClass
+                        }
+                    `}
+                    src={
+                        isTransitioning
+                            ? nextSlide.image
+                            : currentSlide.image
+                    }
+                    alt={
+                        currentSlide.title
+                            ? getTitleText(currentSlide.title)
+                            : 'Anton Gorbach'
+                    }
+                    onLoad={handleFirstImageLoad}
+                    onError={handleFirstImageError}
+                />
             </div>
-          )}
 
-        </>
-      )}
+            {(currentImage > 0 || isTransitioning) && (
+                <>
+                    <div
+                        className="
+                            main-carousel__frame
+                            main-carousel__frame--top
+                        "
+                    />
+                    <div
+                        className="
+                            main-carousel__frame
+                            main-carousel__frame--bottom
+                        "
+                    />
+                </>
+            )}
 
-    </div>
-  );
+            {!isTransitioning && currentSlide.title && (
+                <div className="main-carousel__procedure">
+                    <span data-text={getTitleText(currentSlide.title)}>
+                        {renderTitle(currentSlide.title)}
+                    </span>
+                </div>
+            )}
+
+            {isTransitioning && currentSlide.title && (
+                <div
+                    className="
+                        main-carousel__procedure
+                        main-carousel__procedure--out
+                    "
+                >
+                    <span data-text={getTitleText(currentSlide.title)}>
+                        {renderTitle(currentSlide.title)}
+                    </span>
+                </div>
+            )}
+
+            {isTransitioning && nextSlide.title && (
+                <div
+                    className="
+                        main-carousel__procedure
+                        main-carousel__procedure--in
+                    "
+                >
+                    <span data-text={getTitleText(nextSlide.title)}>
+                        {renderTitle(nextSlide.title)}
+                    </span>
+                </div>
+            )}
+
+            {currentImage === 0 && !isTransitioning && (
+                <div className="main-carousel__slide">
+                    <div className="main-carousel__intro-content">
+                        <div className="main-carousel__intro-header">
+                            <span>BODY MODIFICATION</span>
+                            <span>TATTOO ARTIST</span>
+                        </div>
+
+                        <div className="main-carousel__intro-title">
+                            <p className="main-carousel__intro-name">
+                                <span data-text="Anton">Anton</span>
+                                <span data-text="Gorbach">Gorbach</span>
+                            </p>
+                        </div>
+
+                        <footer className="main-carousel__intro-footer">
+                            <span>PUEBLA</span>
+                            <span>CDMX</span>
+                            <span>GUADALAJARA</span>
+                        </footer>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 };
 
-export default MainCarousel;
+export default Slider;

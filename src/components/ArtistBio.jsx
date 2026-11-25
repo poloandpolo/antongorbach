@@ -2,12 +2,14 @@ import React from 'react';
 
 import './styles/ArtistBio.scss';
 
+import Anton from '../../Images/Anton_3.jpeg'
+
 const ArtistBio = () => {
   return (
     <section className="artist-bio">
       <div className="artist-bio__portrait">
         <img
-          src="https://res.cloudinary.com/djir3xi7x/image/upload/v1791815524/WhatsApp_Image_2026-09-21_at_4.30.48_PM_2_q9q4n8.jpg"
+          src={Anton}
           alt="Retrato de Anton Gorbach"
         />
       </div>

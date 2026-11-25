@@ -10,6 +10,8 @@ import 'slick-carousel/slick/slick-theme.css';
 import BookingForm from '../components/BookingForm';
 import Footer from '../components/Footer';
 
+import Implant1 from '../../Images/Procedimientos/Subdermal Implant/Implant_1.jpeg'
+
 import useProcedureCoupon from '../hooks/useProcedureCoupon';
 import { COUPONS } from '../data/coupons';
 
@@ -67,7 +69,7 @@ export default function ProceduresSubdermalImplant() {
                 <Slider {...settings}>
                     <div className="procedures-subdermal-implant__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792168643/WhatsApp_Image_2026-09-21_at_4.30.48_PM_dttefk.jpg"
+                            src={Implant1}
                             alt="Procedimiento de implante subdérmico"
                         />
                     </div>

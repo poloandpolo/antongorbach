@@ -11,6 +11,10 @@ import 'slick-carousel/slick/slick-theme.css';
 import BookingForm from '../components/BookingForm';
 import Footer from '../components/Footer';
 
+import Tatto1 from '../../Images/Procedimientos/Tattoo/Tatto_1.jpeg'
+import Tatto2 from '../../Images/Procedimientos/Tattoo/Tatto_2.jpeg'
+import Tatto3 from '../../Images/Procedimientos/Tattoo/Tatto_3.jpeg'
+
 import useProcedureCoupon from '../hooks/useProcedureCoupon';
 import { COUPONS } from '../data/coupons';
 
@@ -68,21 +72,21 @@ export default function ProceduresTattoo() {
                 <Slider {...settings}>
                     <div className="procedures-tattoo__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792168949/WhatsApp_Image_2026-09-21_at_4.30.45_PM_fpop9t.jpg"
+                            src={Tatto1}
                             alt="Trabajo de tatuaje realizado por Anton Gorbach"
                         />
                     </div>
 
                     <div className="procedures-tattoo__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792168949/WhatsApp_Image_2026-09-21_at_4.30.46_PM_akhkji.jpg"
+                            src={Tatto2}
                             alt="Detalle de un diseño de tatuaje"
                         />
                     </div>
 
                     <div className="procedures-tattoo__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792168950/WhatsApp_Image_2026-09-21_at_4.30.47_PM_c1psvh.jpg"
+                            src={Tatto3}
                             alt="Resultado de un tatuaje"
                         />
                     </div>

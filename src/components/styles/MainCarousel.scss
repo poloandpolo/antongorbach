@@ -1,763 +1,452 @@
 .main-carousel {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  /* =========================
-     VIDEO DE INTRODUCCIÓN
-  ========================= */
-
-  &__intro-video {
-    position: fixed;
-    inset: 0;
+    position: relative;
+    display: flex;
     width: 100%;
     height: 100vh;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
     background: #000;
-    z-index: 1000;
-    overflow: hidden;
+    isolation: isolate;
 
-    video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      z-index: 2;
-    }
-  }
-
-  /* =========================
-     PRIMER SLIDE PRE-CARGADO
-     
-     La imagen permanece invisible
-     mientras corre el video.
-     
-     Durante los últimos 200ms
-     aparece sobre el video.
-  ========================= */
-
-  &__preload-slide {
-    position: absolute;
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    display: block;
-    object-fit: cover;
-
-    opacity: 0;
-
-    /*
-     * La imagen queda por encima
-     * del video.
-     */
-    z-index: 3;
-
-    pointer-events: none;
-    user-select: none;
-
-    /*
-     * Crossfade durante los últimos
-     * 200ms del video.
-     */
-    transition: opacity 200ms linear;
-
-    &--visible {
-      opacity: 1;
-    }
-  }
-
-  /* =========================
-     FRAME DE INTRODUCCIÓN
-  ========================= */
-
-  &__intro-frame {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  /* =========================
-     CONTENEDOR DE IMÁGENES
-  ========================= */
-
-  &__image-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  /* =========================
-     IMÁGENES DEL CARRUSEL
-  ========================= */
-
-  &__image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    will-change: transform, filter, opacity;
-  }
-
-  /* =========================
-     IMAGEN QUE SALE
-     ZOOM OUT + BLUR
-  ========================= */
-
-  &__image--out {
-    z-index: 1;
-
-    animation:
-      image-out
-      800ms
-      cubic-bezier(0.22, 1, 0.36, 1)
-      forwards;
-  }
-
-  /* =========================
-     IMAGEN QUE ENTRA
-     ZOOM IN + BLUR
-  ========================= */
-
-  &__image--in {
-    z-index: 2;
-
-    animation:
-      image-in
-      800ms
-      cubic-bezier(0.22, 1, 0.36, 1)
-      forwards;
-  }
-
-  /* =========================
-     CONTENEDOR DE PORTADA
-  ========================= */
-
-  &__slide {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    color: white;
-    pointer-events: none;
-  }
-
-  /* =========================
-     CONTENIDO DE PORTADA
-  ========================= */
-
-  &__intro-content {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-
-    animation:
-      intro-content-reveal
-      1.8s
-      ease-out
-      0.3s
-      both;
-  }
-
-  /* =========================
-     HEADER DE PORTADA
-  ========================= */
-
-  &__intro-header {
-    position: absolute;
-    top: 12%;
-    left: 6%;
-
-    display: flex;
-    flex-direction: column;
-
-    font-size: 2.5rem;
-    letter-spacing: 0.3em;
-    line-height: 1.4;
-  }
-
-  /* =========================
-     CONTENEDOR DEL NOMBRE
-     POSICIÓN MEDIA-BAJA
-  ========================= */
-
-  &__intro-title {
-    position: absolute;
-    left: 50%;
-    top: 80%;
-
-    transform: translate(-50%, -50%);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 100%;
-  }
-
-  /* =========================
-     NOMBRE ANTON GORBACH
-     CADA PALABRA TIENE SU
-     PROPIO DUPLICADO MAGENTA
-  ========================= */
-
-  &__intro-name {
-    position: relative;
-
-    margin: 0;
-
-    font-family: 'UnifrakturMaguntia', cursive;
-
-    font-size: clamp(
-      4rem,
-      8vw,
-      7rem
-    );
-
-    line-height: 1;
-
-    color: #fff;
-
-    text-align: center;
-
-    letter-spacing: 0.02em;
-
-    width: max-content;
-    max-width: 90vw;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    gap: 0.25em;
-
-    will-change: filter, opacity;
-
-    span {
-      position: relative;
-      display: inline-block;
-      color: #fff;
-
-      &::after {
-        content: attr(data-text);
-
-        position: absolute;
-        left: 0;
-        top: 0;
-
+    &__image-container {
+        position: relative;
+        z-index: 0;
         width: 100%;
         height: 100%;
+        overflow: hidden;
+        background: #000;
+        isolation: isolate;
 
-        color: #7d00ab;
-
-        transform: translateY(7px);
-
-        z-index: -1;
-
-        pointer-events: none;
-        user-select: none;
-      }
+        &::after {
+            position: absolute;
+            z-index: 3;
+            inset: 0;
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(0, 0, 0, 0.22) 0%,
+                    transparent 25%,
+                    transparent 72%,
+                    rgba(0, 0, 0, 0.28) 100%
+                ),
+                radial-gradient(
+                    ellipse at center,
+                    transparent 48%,
+                    rgba(0, 0, 0, 0.24) 100%
+                );
+            content: '';
+            pointer-events: none;
+        }
     }
-  }
 
-  /* =========================
-     FOOTER DE PORTADA
-  ========================= */
-
-  &__intro-footer {
-    position: absolute;
-
-    bottom: 5%;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    display: flex;
-
-    gap: 1rem;
-
-    font-size: 1.5rem;
-
-    letter-spacing: 0.15em;
-
-    white-space: nowrap;
-  }
-
-  /* =========================
-     NOMBRE DEL PROCEDIMIENTO
-     DESKTOP:
-     PARTE MEDIA-ALTA
-  ========================= */
-
-  &__procedure {
-    position: absolute;
-
-    z-index: 5;
-
-    left: 50%;
-    top: 29%;
-
-    width: 100%;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    transform: translate(-50%, -50%);
-
-    pointer-events: none;
-
-    span {
-      position: relative;
-
-      font-family: 'UnifrakturMaguntia', cursive;
-
-      font-size: clamp(
-        3rem,
-        7vw,
-        6rem
-      );
-
-      line-height: 1;
-
-      color: #fff;
-
-      white-space: normal;
-
-      text-align: center;
-
-      letter-spacing: 0.02em;
-
-      width: max-content;
-      max-width: 100%;
-
-      display: block;
-
-      will-change: filter, opacity;
-
-      /* =========================
-         TEXTO DUPLICADO MAGENTA
-      ========================= */
-
-      &::after {
-        content: attr(data-text);
-
+    &__image {
         position: absolute;
-        left: 0;
-        top: 0;
-
-        width: 100%;
-        height: 100%;
-
-        color: #7d00ab;
-
-        transform: translateY(7px);
-
-        z-index: -1;
-
-        pointer-events: none;
-        user-select: none;
-
-        text-align: center;
-      }
-    }
-  }
-
-  /* =========================
-     TÍTULO QUE SALE
-  ========================= */
-
-  &__procedure--out {
-    span {
-      animation:
-        procedure-out
-        800ms
-        ease-out
-        forwards;
-    }
-  }
-
-  /* =========================
-     TÍTULO QUE ENTRA
-  ========================= */
-
-  &__procedure--in {
-    span {
-      animation:
-        procedure-in
-        800ms
-        ease-out
-        forwards;
-    }
-  }
-
-  /* =========================
-     FRANJAS NEGRAS
-  ========================= */
-
-  &__frame {
-    position: absolute;
-
-    left: 0;
-
-    width: 100%;
-    height: 32%;
-
-    z-index: 4;
-
-    pointer-events: none;
-
-    will-change: opacity;
-  }
-
-  /* =========================
-     FRANJA SUPERIOR
-  ========================= */
-
-  &__frame--top {
-    top: 0;
-
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.8) 0%,
-      rgba(0, 0, 0, 0.36) 25%,
-      rgba(0, 0, 0, 0.18) 55%,
-      rgba(0, 0, 0, 0) 100%
-    );
-  }
-
-  /* =========================
-     FRANJA INFERIOR
-  ========================= */
-
-  &__frame--bottom {
-    bottom: 0;
-
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.8) 0%,
-      rgba(0, 0, 0, 0.36) 25%,
-      rgba(0, 0, 0, 0.15) 55%,
-      rgba(0, 0, 0, 0) 100%
-    );
-  }
-
-  /* =========================
-     ENTRADA DE FRANJAS
-  ========================= */
-
-  &__frame--entering {
-    animation:
-      frame-enter
-      800ms
-      cubic-bezier(0.22, 1, 0.36, 1)
-      forwards;
-  }
-
-  /* =========================
-     TRANSICIÓN FOTOGRÁFICA
-  ========================= */
-
-  @keyframes image-out {
-    0% {
-      transform: scale(1);
-      filter: blur(0);
-      opacity: 1;
-    }
-
-    100% {
-      transform: scale(0.96);
-      filter: blur(8px);
-      opacity: 0;
-    }
-  }
-
-  @keyframes image-in {
-    0% {
-      transform: scale(1.04);
-      filter: blur(8px);
-      opacity: 0;
-    }
-
-    100% {
-      transform: scale(1);
-      filter: blur(0);
-      opacity: 1;
-    }
-  }
-
-  /* =========================
-     PROCEDIMIENTO QUE SALE
-     BLUR 0 → 20px
-  ========================= */
-
-  @keyframes procedure-out {
-    from {
-      opacity: 1;
-      filter: blur(0);
-    }
-
-    to {
-      opacity: 0;
-      filter: blur(20px);
-    }
-  }
-
-  /* =========================
-     PROCEDIMIENTO QUE ENTRA
-     BLUR 20px → 0
-  ========================= */
-
-  @keyframes procedure-in {
-    from {
-      opacity: 0;
-      filter: blur(20px);
-    }
-
-    to {
-      opacity: 1;
-      filter: blur(0);
-    }
-  }
-
-  /* =========================
-     ENTRADA DE FRANJAS
-  ========================= */
-
-  @keyframes frame-enter {
-    0% {
-      opacity: 0;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
-  /* =========================
-     ANIMACIÓN PORTADA
-  ========================= */
-
-  @keyframes intro-content-reveal {
-    from {
-      opacity: 0;
-      filter: blur(20px);
-    }
-
-    to {
-      opacity: 1;
-      filter: blur(0);
-    }
-  }
-
-  /* =========================
-     TABLET
-  ========================= */
-
-  @media (max-width: 768px) {
-    &__image-container {
-      width: 90%;
-      height: 80%;
-    }
-
-    /* =========================
-       HEADER TABLET
-    ========================= */
-
-    &__intro-header {
-      top: 15%;
-      left: 7%;
-
-      font-size: 0.85rem;
-
-      letter-spacing: 0.3em;
-    }
-
-    /* =========================
-       NOMBRE TABLET
-    ========================= */
-
-    &__intro-title {
-      left: 50%;
-      top: 69%;
-
-      transform: translate(-50%, -50%);
-    }
-
-    &__intro-name {
-      font-size: clamp(
-        3.5rem,
-        10vw,
-        6rem
-      );
-    }
-
-    /* =========================
-       FOOTER TABLET
-    ========================= */
-
-    &__intro-footer {
-      bottom: 6%;
-
-      gap: 1.5rem;
-
-      font-size: 0.65rem;
-
-      letter-spacing: 0.15em;
-    }
-
-    /* =========================
-       PROCEDIMIENTO TABLET
-    ========================= */
-
-    &__procedure {
-      left: 50%;
-      top: 40%;
-
-      transform: translate(-50%, -50%);
-
-      span {
-        font-size: clamp(
-          2.8rem,
-          8vw,
-          5rem
-        );
-
-        text-align: center;
-      }
-    }
-
-    /* =========================
-       FRANJAS TABLET
-    ========================= */
-
-    &__frame {
-      height: 34%;
-    }
-  }
-
-  /* =========================
-     MOBILE
-  ========================= */
-
-  @media (max-width: 480px) {
-    &__image-container {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* =========================
-       HEADER MOBILE
-    ========================= */
-
-    &__intro-header {
-      top: 12%;
-      left: 6%;
-
-      font-size: 1rem;
-
-      letter-spacing: 0.3em;
-    }
-
-    /* =========================
-       NOMBRE MOBILE
-       PARTE MEDIA-BAJA
-    ========================= */
-
-    &__intro-title {
-      left: 50%;
-      top: 77%;
-
-      transform: translate(-50%, -50%);
-    }
-
-    &__intro-name {
-      font-size: clamp(
-        3.2rem,
-        14vw,
-        5rem
-      );
-
-      max-width: 90vw;
-
-      flex-direction: column;
-
-      gap: 0;
-
-      text-align: center;
-
-      span {
+        z-index: 1;
+        inset: 0;
         display: block;
-
-        &::after {
-          transform: translateY(7px);
-        }
-      }
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        will-change: transform, filter, opacity, clip-path;
     }
 
-    /* =========================
-       FOOTER MOBILE
-    ========================= */
-
-    &__intro-footer {
-      bottom: 5%;
-
-      gap: 1rem;
-
-      font-size: 0.9rem;
-
-      letter-spacing: 0.15em;
+    &__image--waiting {
+        opacity: 0;
+        clip-path: circle(0% at 50% 50%);
     }
 
-    /* =========================
-       PROCEDIMIENTO MOBILE
-       PARTE MEDIA-ALTA
-    ========================= */
+    &__image--initial {
+        z-index: 2;
+        transform-origin: center center;
+        animation: cinematic-radial-entry 900ms
+            cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
 
-    &__procedure {
-      left: 50%;
-      top: 27%;
+    &__image--out {
+        z-index: 2;
+        animation: image-out 800ms
+            cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
 
-      transform: translate(-50%, -50%);
+    &__image--in {
+        z-index: 2;
+        animation: image-in 800ms
+            cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
 
-      span {
-        font-size: 3rem;
+    &__slide {
+        position: absolute;
+        z-index: 4;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        pointer-events: none;
+    }
 
-        white-space: normal;
+    &__intro-content {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        animation: intro-content-reveal 1.8s ease-out 0.3s both;
+    }
 
+    &__intro-header {
+        position: absolute;
+        top: 12%;
+        left: 6%;
+        display: flex;
+        flex-direction: column;
+        font-size: 2.5rem;
+        letter-spacing: 0.3em;
+        line-height: 1.4;
+    }
+
+    &__intro-title {
+        position: absolute;
+        top: 80%;
+        left: 50%;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        transform: translate(-50%, -50%);
+    }
+
+    &__intro-name {
+        position: relative;
+        display: flex;
+        width: max-content;
+        max-width: 90vw;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25em;
+        margin: 0;
+        color: #fff;
+        font-family: 'UnifrakturMaguntia', cursive;
+        font-size: clamp(4rem, 8vw, 7rem);
+        line-height: 1;
+        letter-spacing: 0.02em;
         text-align: center;
 
-        width: max-content;
-        max-width: 100%;
+        span {
+            position: relative;
+            display: inline-block;
+            color: #fff;
 
-        &::after {
-          transform: translateY(7px);
-          text-align: center;
+            &::after {
+                position: absolute;
+                z-index: -1;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                color: #7d00ab;
+                content: attr(data-text);
+                transform: translateY(7px);
+                pointer-events: none;
+                user-select: none;
+            }
         }
-      }
     }
 
-    /* =========================
-       FRANJAS MOBILE
-    ========================= */
+    &__intro-footer {
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        display: flex;
+        gap: 1rem;
+        font-size: 1.5rem;
+        letter-spacing: 0.15em;
+        white-space: nowrap;
+        transform: translateX(-50%);
+    }
+
+    &__procedure {
+        position: absolute;
+        z-index: 7;
+        top: 29%;
+        left: 50%;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+
+        span {
+            position: relative;
+            display: block;
+            width: max-content;
+            max-width: 100%;
+            color: #fff;
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: clamp(3rem, 7vw, 6rem);
+            line-height: 1;
+            letter-spacing: 0.02em;
+            text-align: center;
+            white-space: normal;
+            will-change: filter, opacity;
+
+            &::after {
+                position: absolute;
+                z-index: -1;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                color: #7d00ab;
+                content: attr(data-text);
+                text-align: center;
+                transform: translateY(7px);
+                pointer-events: none;
+                user-select: none;
+            }
+        }
+    }
+
+    &__procedure--out span {
+        animation: procedure-out 800ms ease-out both;
+    }
+
+    &__procedure--in span {
+        animation: procedure-in 800ms ease-out both;
+    }
 
     &__frame {
-      height: 70%;
+        position: absolute;
+        z-index: 6;
+        left: 0;
+        width: 100%;
+        height: 32%;
+        pointer-events: none;
     }
-  }
+
+    &__frame--top {
+        top: 0;
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.78) 0%,
+            rgba(0, 0, 0, 0.34) 25%,
+            rgba(0, 0, 0, 0.14) 55%,
+            transparent 100%
+        );
+    }
+
+    &__frame--bottom {
+        bottom: 0;
+        background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.78) 0%,
+            rgba(0, 0, 0, 0.34) 25%,
+            rgba(0, 0, 0, 0.14) 55%,
+            transparent 100%
+        );
+    }
+}
+
+// El zoom y el reveal radial usan un solo tramo, sin pausa intermedia.
+@keyframes cinematic-radial-entry {
+    from {
+        opacity: 0;
+        clip-path: circle(0% at 50% 50%);
+        transform: scale(1.34);
+        filter: brightness(0.45);
+    }
+
+    to {
+        opacity: 1;
+        clip-path: circle(150% at 50% 50%);
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+@keyframes image-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.96);
+        filter: blur(8px);
+    }
+}
+
+@keyframes image-in {
+    from {
+        opacity: 0;
+        transform: scale(1.04);
+        filter: blur(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes procedure-out {
+    from {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    to {
+        opacity: 0;
+        filter: blur(20px);
+    }
+}
+
+@keyframes procedure-in {
+    from {
+        opacity: 0;
+        filter: blur(20px);
+    }
+
+    to {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+@keyframes intro-content-reveal {
+    from {
+        opacity: 0;
+        filter: blur(20px);
+    }
+
+    to {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+// Tablet
+@media (max-width: 768px) {
+    .main-carousel {
+        &__image-container {
+            width: 90%;
+            height: 80%;
+        }
+
+        &__intro-header {
+            top: 15%;
+            left: 7%;
+            font-size: 0.85rem;
+            letter-spacing: 0.3em;
+        }
+
+        &__intro-title {
+            top: 69%;
+        }
+
+        &__intro-name {
+            font-size: clamp(3.5rem, 10vw, 6rem);
+        }
+
+        &__intro-footer {
+            bottom: 6%;
+            gap: 1.5rem;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+        }
+
+        &__procedure {
+            top: 40%;
+
+            span {
+                font-size: clamp(2.8rem, 8vw, 5rem);
+                text-align: center;
+            }
+        }
+
+        &__frame {
+            height: 34%;
+        }
+    }
+}
+
+// Mobile
+@media (max-width: 480px) {
+    .main-carousel {
+        &__image-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        &__intro-header {
+            top: 12%;
+            left: 6%;
+            font-size: 1rem;
+            letter-spacing: 0.3em;
+        }
+
+        &__intro-title {
+            top: 77%;
+        }
+
+        &__intro-name {
+            flex-direction: column;
+            gap: 0;
+            max-width: 90vw;
+            font-size: clamp(3.2rem, 14vw, 5rem);
+            text-align: center;
+
+            span {
+                display: block;
+
+                &::after {
+                    transform: translateY(7px);
+                }
+            }
+        }
+
+        &__intro-footer {
+            bottom: 5%;
+            gap: 1rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+        }
+
+        &__procedure {
+            top: 27%;
+
+            span {
+                width: max-content;
+                max-width: 100%;
+                font-size: 3rem;
+                text-align: center;
+                white-space: normal;
+
+                &::after {
+                    text-align: center;
+                    transform: translateY(7px);
+                }
+            }
+        }
+
+        &__frame {
+            height: 70%;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .main-carousel__image--initial,
+    .main-carousel__image--out,
+    .main-carousel__image--in,
+    .main-carousel__procedure--out span,
+    .main-carousel__procedure--in span,
+    .main-carousel__intro-content {
+        animation-duration: 0.01ms !important;
+    }
 }

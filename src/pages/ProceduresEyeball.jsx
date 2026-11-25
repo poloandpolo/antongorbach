@@ -14,6 +14,10 @@ import CouponButton from '../components/CouponButton';
 import CouponModal from '../components/CouponModal';
 import CouponListModal from '../components/CouponListModal';
 
+import Eyeball1 from '../../Images/Procedimientos/Eyeball/Eyeball_1.jpeg'
+import Eyeball2 from '../../Images/Procedimientos/Eyeball/Eyeball_2.jpeg'
+import Eyeball3 from '../../Images/Procedimientos/Eyeball/Eyeball_3.jpeg'
+
 const Slider = SlickModule.default ?? SlickModule;
 
 const COUPONS = [
@@ -89,21 +93,21 @@ export default function ProceduresEyeball() {
                 <Slider {...settings}>
                     <div className="procedures-eyeball__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792165270/WhatsApp_Image_2026-09-21_at_4.31.14_PM_hjaj6u.jpg"
+                            src={Eyeball3}
                             alt="Procedimiento de tatuaje escleral realizado por Anton Gorbach"
                         />
                     </div>
 
                     <div className="procedures-eyeball__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792165270/WhatsApp_Image_2026-09-21_at_4.30.48_PM_ls865u.jpg"
+                            src={Eyeball2}
                             alt="Detalle de modificación ocular"
                         />
                     </div>
 
                     <div className="procedures-eyeball__slide">
                         <img
-                            src="https://res.cloudinary.com/djir3xi7x/image/upload/v1792165270/WhatsApp_Image_2026-09-21_at_4.30.43_PM_fk1en8.jpg"
+                            src={Eyeball1}
                             alt="Resultado de tatuaje escleral"
                         />
                     </div>
