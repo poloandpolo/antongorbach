@@ -177,8 +177,8 @@ const Slider = ({ onFinish }) => {
         }
 
         const firstSlideDuration = 2900;
-        const slideDuration = 900;
-        const transitionDuration = 800;
+        const slideDuration = 370;
+        const transitionDuration = 1200;
 
         if (isLastSlide) {
             const finishTimeout = window.setTimeout(() => {
